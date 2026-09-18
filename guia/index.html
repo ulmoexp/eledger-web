@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Guía · Movimientos bancarios</title>
+<meta name="description" content="Guía de uso de Movimientos bancarios: instalación, cómo se clasifica, el histórico, y solución de problemas.">
 <link rel="stylesheet" href="../assets/estilos.css">
 </head>
 <body>
@@ -20,16 +21,517 @@
   </nav>
 </header>
 
-<main class="contenedor stub">
-  <h1>La guía llega en la próxima fase</h1>
-  <p>
-    Mientras tanto, la guía completa va dentro del ZIP que te descargas
-    (<code>GUIA.pdf</code>), y las instrucciones básicas están en
-    <code>LEEME.txt</code>, en la raíz de
-    <a href="https://github.com/ulmoexp/eledger">el repositorio</a>.
+<main>
+
+<section class="contenedor" id="indice">
+  <h1>Guía de uso</h1>
+  <p class="entradilla">
+    Unificación, limpieza y clasificación de extractos bancarios. Todo se
+    procesa en tu ordenador: los datos no salen de tu equipo.
   </p>
-  <p><a class="boton-secundario" href="../">← Volver a portada</a></p>
+  <div class="indice-guia">
+    <div class="grupo-indice">
+      <h3>Empezar</h3>
+      <ul>
+        <li><a href="#chuleta">Chuleta</a></li>
+        <li><a href="#que-hace">Qué hace</a></li>
+        <li><a href="#instalacion">Instalación</a></li>
+        <li><a href="#estructura-de-carpetas">Estructura de carpetas</a></li>
+      </ul>
+    </div>
+    <div class="grupo-indice">
+      <h3>Leer tus extractos</h3>
+      <ul>
+        <li><a href="#formatos-de-entrada">Formatos de entrada</a></li>
+        <li><a href="#cuenta-o-tarjeta">Cuenta o tarjeta, y extractos repetidos</a></li>
+        <li><a href="#columnas-generadas">Columnas generadas</a></li>
+      </ul>
+    </div>
+    <div class="grupo-indice">
+      <h3>Clasificar</h3>
+      <ul>
+        <li><a href="#rules-json">rules.json · cómo se clasifica</a></li>
+        <li><a href="#probar-una-regla">Probar una regla</a></li>
+        <li><a href="#exclude-patterns-json">exclude_patterns.json</a></li>
+        <li><a href="#cuentas-json">cuentas.json</a></li>
+      </ul>
+    </div>
+    <div class="grupo-indice">
+      <h3>El histórico y las correcciones</h3>
+      <ul>
+        <li><a href="#el-historico">El histórico</a></li>
+        <li><a href="#corregir-un-movimiento">Corregir un movimiento suelto</a></li>
+        <li><a href="#categorias-json">categorias.json</a></li>
+        <li><a href="#como-se-calcula-el-resumen">Cómo se calcula el resumen</a></li>
+        <li><a href="#ajuste-de-mes">Ajuste de mes</a></li>
+      </ul>
+    </div>
+    <div class="grupo-indice">
+      <h3>Integrarlo con tu contabilidad</h3>
+      <ul>
+        <li><a href="#sincronizar">Sincronizar</a></li>
+        <li><a href="#uso-en-excel">Uso en Excel</a></li>
+      </ul>
+    </div>
+    <div class="grupo-indice">
+      <h3>Compartir y ayuda</h3>
+      <ul>
+        <li><a href="#darselo-a-otra-persona">Dárselo a otra persona</a></li>
+        <li><a href="#cuando-algo-no-sale">Cuando algo no sale</a></li>
+      </ul>
+    </div>
+    <div class="grupo-indice">
+      <h3>Privacidad</h3>
+      <ul>
+        <li><a href="#privacidad">Uso local · los datos no salen del equipo</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="contenedor seccion-guia" id="chuleta">
+  <h2>Chuleta</h2>
+  <ol class="pasos">
+    <li><span>Descarga del banco los extractos de <strong>cuenta</strong> y de <strong>tarjeta</strong></span></li>
+    <li><span>Suéltalos en la carpeta <code>entrada/</code> <span class="mut">tal cual: sin renombrar, sin convertir</span></span></li>
+    <li><span>Doble clic en <code>ejecutar.bat</code> <span class="mut">(Windows)</span> o <code>ejecutar.command</code> <span class="mut">(Mac)</span></span></li>
+    <li><span>Revisa el resumen en pantalla</span></li>
+    <li><span>Abre tu Excel: los movimientos ya están dentro</span></li>
+  </ol>
+  <div class="aviso">
+    <h3>No hay que preparar nada</h3>
+    <p>Los .xls del banco no se convierten: la herramienta detecta el formato
+      real mirando el contenido, no la extensión. Tampoco hay que renombrarlos
+      ni separar cuenta de tarjetas: eso también lo deduce sola.</p>
+  </div>
+</section>
+
+<section class="contenedor seccion-guia" id="que-hace">
+  <h2>Qué hace</h2>
+  <p>Lee los movimientos de la cuenta y de todas las tarjetas, los junta en
+    una sola tabla, descarta los movimientos que no quieres contar, los
+    clasifica por categorías y genera un Excel listo para pegar en tu hoja de
+    cálculo.</p>
+  <div class="flujo">
+    <div class="paso-flujo"><strong>Entrada</strong><span>cuenta + tarjetas<br>cualquier formato</span></div>
+    <div class="flecha">→</div>
+    <div class="paso-flujo"><strong>Proceso</strong><span>unificar · excluir<br>clasificar · ajustar mes</span></div>
+    <div class="flecha">→</div>
+    <div class="paso-flujo"><strong>Salida</strong><span>movimientos_limpios<br>movimientos_excluidos</span></div>
+  </div>
+</section>
+
+<section class="contenedor seccion-guia" id="instalacion">
+  <h2>Instalación</h2>
+  <p>Una sola vez: doble clic en <code>instalar.bat</code> (en Mac,
+    <code>instalar.command</code>). Tarda un par de minutos y no toca nada de
+    lo que ya tengas instalado.</p>
+  <div class="tabla-guia-scroll">
+  <table class="tabla-guia">
+    <thead><tr><th>Si sale...</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><em>«No encuentro Python»</em></td>
+        <td>Instálalo desde <code>python.org/downloads</code> y marca
+          <strong>«Add Python to PATH»</strong> durante la instalación.</td>
+      </tr>
+      <tr>
+        <td><em>«Falta una librería»</em> al ejecutar</td>
+        <td>No se ha llegado a instalar. Vuelve a lanzar
+          <code>instalar.bat</code>.</td>
+      </tr>
+      <tr>
+        <td>Mac: no deja abrir el fichero</td>
+        <td>Clic derecho sobre él → <strong>Abrir</strong>. Solo la primera
+          vez.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="pmini">Si lo que te han dado es un <code>Movimientos.exe</code>,
+    no hay que instalar nada: doble clic y ya.</p>
+</section>
+
+<section class="contenedor seccion-guia" id="estructura-de-carpetas">
+  <h2>Estructura de carpetas</h2>
+  <pre class="codigo"><code>proyecto/
+├── instalar.bat     ← solo la primera vez
+├── ejecutar.bat      ← doble clic para procesar (ejecutar.command en Mac)
+├── exportar.bat      ← ZIP para dar a alguien, sin tus datos
+│
+├── entrada/          ← AQUÍ sueltas lo del banco
+├── datos/            ← LO INSUSTITUIBLE: tu histórico acumulado
+├── ajustes/          ← tu configuración (rules.json y poco más)
+└── salida/           ← se regenera cada vez</code></pre>
+  <p class="pmini">En el día a día solo tocas <code>entrada/</code>.
+    <code>datos/</code> es lo único insustituible: si haces una copia de
+    seguridad de algo, que sea de esa carpeta.</p>
+</section>
+
+<section class="contenedor seccion-guia" id="formatos-de-entrada">
+  <h2>Formatos de entrada</h2>
+  <p>Los bancos llaman «.xls» a cosas muy distintas: Excel clásico, una tabla
+    HTML, un XML, incluso un CSV renombrado. La herramienta mira el contenido
+    real del fichero, no la extensión, así que no tienes que convertir ni
+    renombrar nada.</p>
+</section>
+
+<section class="contenedor seccion-guia" id="cuenta-o-tarjeta">
+  <h2>Cuenta o tarjeta, y extractos repetidos</h2>
+  <p>No tienes que decirle cuál es cuál: si el fichero trae columna de
+    <strong>saldo</strong> es un extracto de cuenta, si trae <strong>importe
+    de la operación</strong> es de tarjeta. Si el contenido no lo aclara,
+    recurre al nombre del fichero — y siempre te dice por pantalla qué ha
+    decidido y por qué.</p>
+  <h3>Extractos que se solapan</h3>
+  <p>Puedes dejar en <code>entrada/</code> descargas de meses anteriores sin
+    miedo: los movimientos que aparecen en más de un fichero se detectan y se
+    cuentan una sola vez.</p>
+  <div class="aviso">
+    <h3>Repetido no es lo mismo que duplicado</h3>
+    <p>Dos cargos idénticos el mismo día en el mismo sitio son dos gastos
+      reales, no un error. Solo se descartan las repeticiones <strong>entre
+      ficheros distintos</strong>.</p>
+  </div>
+</section>
+
+<section class="contenedor seccion-guia" id="columnas-generadas">
+  <h2>Columnas generadas</h2>
+  <p>El Excel trae fecha, descripción, importe, tipo (cuenta o tarjeta) y
+    categoría. Hay una columna más, <code>categoria_manual</code>, que es la
+    única que se toca a mano — sirve para corregir una categoría o excluir
+    una línea (ver «Corregir un movimiento suelto»). El resto son columnas de
+    apoyo que no hace falta mirar.</p>
+</section>
+
+<section class="contenedor seccion-guia" id="rules-json">
+  <h2>rules.json · cómo se clasifica</h2>
+  <p>Es un diccionario de <strong>texto a buscar → categoría</strong>. Gana
+    la <strong>primera</strong> regla que casa, así que el orden del fichero
+    importa. La comparación no distingue mayúsculas ni acentos: <code>nomina</code>
+    encuentra «NÓMINA».</p>
+  <div class="tabla-guia-scroll">
+  <table class="tabla-guia">
+    <thead><tr><th>Fichero</th><th>Qué es</th></tr></thead>
+    <tbody>
+      <tr><td><code>ajustes/rules.json</code></td><td><strong>Las tuyas.</strong> Mandan sobre la base. No se tocan nunca al actualizar.</td></tr>
+      <tr><td><code>app/rules_base.json</code></td><td><strong>La base</strong> que viene con el programa: cadenas conocidas en toda España. Se reemplaza entera con cada versión, así que no la edites.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="pmini">Para <strong>cambiar</strong> una regla de la base, repite
+    esa misma clave en la tuya. Para <strong>apagarla</strong>, ponla a
+    <code>null</code>.</p>
+  <div class="tabla-guia-scroll">
+  <table class="tabla-guia">
+    <thead><tr><th>Cómo se escribe</th><th>Qué significa</th><th>Ejemplo</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>"mercadona"</code></td>
+        <td><strong>Inicio de palabra</strong> (por defecto).</td>
+        <td><code>veterin</code> encuentra VETERINARIO</td>
+      </tr>
+      <tr>
+        <td><code>"=dia"</code></td>
+        <td><strong>Palabra completa.</strong> Para claves cortas y ambiguas.</td>
+        <td><code>=dia</code> encuentra DIA pero no ME<strong>DIA</strong> MARKT</td>
+      </tr>
+      <tr>
+        <td><code>"~dia"</code></td>
+        <td><strong>En cualquier sitio.</strong> Solo si de verdad quieres pillarlo dentro de otra palabra.</td>
+        <td><code>~dia</code> encuentra ME<strong>DIA</strong> MARKT</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <h3>Qué se puede poner como categoría</h3>
+  <div class="tabla-guia-scroll">
+  <table class="tabla-guia">
+    <thead><tr><th>Valor</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td><code>"Comida"</code></td><td>Lo normal: casa y va a esa categoría.</td></tr>
+      <tr>
+        <td><code>{"+": "Ingresos", "-": "Ocio"}</code></td>
+        <td><strong>Según el signo.</strong> Un Bizum que <em>recibes</em> es
+          un ingreso; uno que <em>envías</em>, un gasto.</td>
+      </tr>
+      <tr><td><code>null</code></td><td><strong>Apaga</strong> la regla.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="aviso alerta">
+    <h3>Las devoluciones NO necesitan regla de signo</h3>
+    <p>Si te devuelven una compra, que ese abono reste de la misma categoría
+      es lo correcto. El signo solo hace falta cuando el importe positivo es
+      un concepto <strong>distinto</strong> del negativo (Bizum recibido /
+      enviado).</p>
+  </div>
+  <h3>Añadir una categoría nueva</h3>
+  <pre class="codigo"><code>"decathlon": "Ocio",
+"=gym":      "Ocio",</code></pre>
+  <p class="pmini">Usa <code>=</code> siempre que la palabra sea corta o
+    pueda aparecer dentro de otra: sin ese marcador, <code>bar</code> se
+    comería BARCELONA.</p>
+</section>
+
+<section class="contenedor seccion-guia" id="probar-una-regla">
+  <h2>Probar una regla</h2>
+  <p>Para ver en qué categoría caería un concepto concreto, sin reprocesar
+    todo:</p>
+  <pre class="codigo"><code>python app/reglas.py "MEDIA MARKT ONLINE" "BAR LA ESQUINA"
+
+MEDIA MARKT ONLINE  ->  Otros       [sin regla]
+BAR LA ESQUINA      ->  Ocio        [=bar]</code></pre>
+  <p class="pmini">Si pones un número al final, se usa como importe: es la
+    forma de comprobar las reglas que dependen del signo.</p>
+</section>
+
+<section class="contenedor seccion-guia" id="exclude-patterns-json">
+  <h2>exclude_patterns.json · qué se descarta</h2>
+  <p>Lista de textos cuyos movimientos no deben contar, con la misma sintaxis
+    que <code>rules.json</code>. Sirve sobre todo para el recibo mensual de
+    la tarjeta, que si no contarías dos veces: una vez en la cuenta y otra
+    como compras sueltas.</p>
+  <pre class="codigo"><code>[
+  "pago recibo 77",
+  "tarj.crdto 77"
+]</code></pre>
+  <p class="pmini">El <code>77</code> son los dígitos con que tu banco
+    identifica la tarjeta en el recibo. Si lo dejas vacío, al terminar la
+    herramienta te propone la línea lista para pegar aquí. Lo descartado no
+    se pierde: queda en <code>movimientos_excluidos.xlsx</code>.</p>
+</section>
+
+<section class="contenedor seccion-guia" id="cuentas-json">
+  <h2>cuentas.json · si tienes más de una cuenta</h2>
+  <p>Solo hace falta si tienes <strong>más de una cuenta del mismo tipo</strong>.
+    Sin esto, un movimiento idéntico el mismo día en dos cuentas se cuenta
+    una sola vez, como si fuera el mismo.</p>
+  <pre class="codigo"><code>{
+  "principal": "principal",
+  "ahorro": "ahorro"
+}</code></pre>
+  <p class="pmini">La clave es un trozo del nombre del fichero. Vacío (como
+    viene de fábrica), todos los ficheros cuentan como si fueran de la misma
+    cuenta.</p>
+</section>
+
+<section class="contenedor seccion-guia" id="el-historico">
+  <h2>El histórico</h2>
+  <p><code>historico.xlsx</code> acumula todo lo que has ido procesando,
+    ejecución tras ejecución. Puedes borrar de <code>entrada/</code> los
+    extractos viejos: lo que ya entró, entrado se queda. Tiene dos hojas:</p>
+  <div class="tabla-guia-scroll">
+  <table class="tabla-guia">
+    <thead><tr><th>Hoja</th><th>Qué contiene</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>MOVIMIENTOS</code></td>
+        <td>Todos los movimientos, uno por fila. La cabecera naranja señala
+          la única columna que puedes escribir tú.</td>
+      </tr>
+      <tr>
+        <td><code>RESUMEN</code></td>
+        <td>La matriz mes × categoría con los totales, el balance y el
+          arrastre.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="aviso">
+    <h3>Las categorías no se congelan</h3>
+    <p>El histórico guarda los movimientos en crudo y los vuelve a
+      clasificar <strong>enteros</strong> en cada ejecución: cuando afines
+      una regla, el cambio se aplica también hacia atrás. La única excepción
+      es lo que escribas en <code>categoria_manual</code>: eso sí se
+      respeta.</p>
+  </div>
+</section>
+
+<section class="contenedor seccion-guia" id="corregir-un-movimiento">
+  <h2>Corregir un movimiento suelto</h2>
+  <p>Las reglas leen el texto del concepto, no la fecha, así que no pueden
+    distinguir el <code>BIZUM A MARTA</code> que un mes es el alquiler y otro
+    una cena. Para esos casos está la columna <strong>categoria_manual</strong>.</p>
+  <ol class="pasos">
+    <li><span>Abre <code>datos/historico.xlsx</code>, hoja
+      <strong>MOVIMIENTOS</strong>, y busca la línea</span></li>
+    <li><span>En <strong>categoria_manual</strong> (cabecera naranja) escribe
+      la categoría que quieras</span></li>
+    <li><span>Guarda, cierra, y vuelve a ejecutar</span></li>
+  </ol>
+  <div class="tabla-guia-scroll">
+  <table class="tabla-guia">
+    <thead><tr><th>Qué escribes</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td>Una categoría</td><td>Esa línea pasa a esa categoría, pase lo que pase con las reglas.</td></tr>
+      <tr><td><code>(excluido)</code></td><td>Saca esa línea de los totales.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="aviso alerta">
+    <h3>Escribe solo en esa columna</h3>
+    <p>El resto de la hoja se regenera en cada ejecución. Por si acaso,
+      antes de cada escritura se guarda una copia del histórico en
+      <code>copias/</code>.</p>
+  </div>
+</section>
+
+<section class="contenedor seccion-guia" id="categorias-json">
+  <h2>categorias.json · las columnas del resumen</h2>
+  <p>Declara qué categorías espera el resumen: cuáles suman como gasto,
+    cuáles como ingreso, y con qué columna de fecha se agrupa
+    (<code>mes</code> o <code>mes_ajustado</code>).</p>
+  <div class="aviso alerta">
+    <h3>El fallo que esto evita</h3>
+    <p>Si el texto de una categoría en <code>rules.json</code> no coincide
+      <strong>letra por letra</strong> con el del resumen (tildes incluidas),
+      esa columna suma 0 y no avisa nadie. Al arrancar se comparan los dos
+      ficheros y se avisa de las diferencias.</p>
+  </div>
+</section>
+
+<section class="contenedor seccion-guia" id="como-se-calcula-el-resumen">
+  <h2>Cómo se calcula el resumen</h2>
+  <pre class="codigo"><code>Total Gastos = suma de las categorías de gasto
+Ingresos     = suma de las categorías de ingreso
+Balance      = Ingresos - Total Gastos
+
+Extras       = lo que se arrastra A FAVOR del mes anterior
+Deuda        = lo que se arrastra EN CONTRA del mes anterior
+Acumulado    = Extras - Deuda + Balance</code></pre>
+  <p class="pmini"><strong>Balance</strong> es el resultado del mes por sí
+    solo; <strong>Acumulado</strong> es el que responde a «¿voy bien o voy
+    mal?».</p>
+  <div class="aviso">
+    <h3>De dónde parte el Acumulado</h3>
+    <p>Si tu extracto de cuenta trae columna de saldo, el Acumulado del
+      primer mes empieza en el saldo real de la cuenta, no en 0. Se detecta
+      solo y se avisa por pantalla de qué saldo ha usado.</p>
+  </div>
+</section>
+
+<section class="contenedor seccion-guia" id="ajuste-de-mes">
+  <h2>Ajuste de mes</h2>
+  <p>Una nómina que entra el día 1, 2 o 3 corresponde en realidad al mes
+    anterior: es con lo que has vivido ese mes. Cuando eso pasa, la columna
+    <strong>mes_ajustado</strong> retrocede un mes.</p>
+  <div class="tabla-guia-scroll">
+  <table class="tabla-guia">
+    <thead><tr><th>descripcion</th><th>mes</th><th>mes_ajustado</th></tr></thead>
+    <tbody>
+      <tr><td>NOMINA EMPRESA SL <span class="mut">(cobras)</span></td><td><code>2026-04</code></td><td><code><strong>2026-03</strong></code></td></tr>
+      <tr><td>COMPRA MERCADONA <span class="mut">(pagas)</span></td><td><code>2026-04</code></td><td><code>2026-04</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="pmini">Un gasto pertenece al mes en que se paga; solo se mueven
+    los ingresos. Se configura en <code>mes_contable.json</code>, y para
+    cuadrar tus meses usa siempre <strong>mes_ajustado</strong>, no
+    <strong>mes</strong>.</p>
+</section>
+
+<section class="contenedor seccion-guia" id="sincronizar">
+  <h2>Sincronizar con tu contabilidad</h2>
+  <p>En vez de copiar y pegar cada mes, la herramienta puede escribir los
+    movimientos directamente en tu fichero. Se configura en
+    <code>sincronizar.json</code>; si no lo tocas, no se sincroniza nada y
+    todo funciona como antes.</p>
+  <pre class="codigo"><code>{
+  "archivo": "contabilidad.xlsx",
+  "hoja": "MOVIMIENTOS",
+  "incluir_excluidos": false,
+  "copias_de_seguridad": 10
+}</code></pre>
+  <div class="aviso alerta">
+    <h3>Con red de seguridad</h3>
+    <p>Antes de escribir se guarda una copia con fecha, y se comprueba que la
+      hoja de destino no tenga tablas dinámicas, macros ni fórmulas: si las
+      tiene, se cancela la escritura y tu fichero se queda tal como estaba.</p>
+  </div>
+</section>
+
+<section class="contenedor seccion-guia" id="uso-en-excel">
+  <h2>Uso en Excel</h2>
+  <p>Tus fórmulas no cambian: el orden de columnas se mantiene.</p>
+  <pre class="codigo"><code>=SUMAR.SI.CONJUNTO(MOVIMIENTOS!C:C;
+                   MOVIMIENTOS!G:G; "Comida";
+                   MOVIMIENTOS!F:F; "2026-04")</code></pre>
+  <p class="pmini">C es importe, G es categoría, F es el mes contable — usa
+    siempre <code>F</code>, no <code>E</code>, para que el ajuste de nóminas
+    cuente.</p>
+</section>
+
+<section class="contenedor seccion-guia" id="darselo-a-otra-persona">
+  <h2>Dárselo a otra persona</h2>
+  <div class="aviso alerta">
+    <h3>No comprimas la carpeta</h3>
+    <p>Le estarías dando tu <code>historico.xlsx</code> y tu
+      <code>rules.json</code>, que es un retrato bastante fino de tu vida: el
+      colegio de los críos, el veterinario, el gimnasio, el casero.</p>
+  </div>
+  <p>Usa <code>exportar.bat</code> (en Mac, <code>exportar.command</code>).
+    Genera un ZIP con el programa, los lanzadores y unas reglas de partida
+    genéricas — nada de lo tuyo.</p>
+</section>
+
+<section class="contenedor seccion-guia" id="cuando-algo-no-sale">
+  <h2>Cuando algo no sale</h2>
+  <div class="tabla-guia-scroll">
+  <table class="tabla-guia">
+    <thead><tr><th>Síntoma</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><em>«La carpeta entrada/ está vacía»</em></td>
+        <td>Comprueba que lo que has soltado no es un <code>.zip</code> ni un
+          <code>.pdf</code>: solo se leen extractos.</td>
+      </tr>
+      <tr>
+        <td>Un extracto se ha tomado por el tipo que no era</td>
+        <td>Por pantalla se indica el motivo. Como apaño rápido, mete la
+          palabra «tarjeta» en el nombre del fichero.</td>
+      </tr>
+      <tr>
+        <td>Un movimiento cae en la categoría equivocada</td>
+        <td>Mira la columna <strong>regla</strong>: te dice exactamente qué
+          clave lo clasificó. Afínala con <code>=</code> o muévela de sitio
+          en el JSON.</td>
+      </tr>
+      <tr>
+        <td>Una categoría suma 0 € en el resumen</td>
+        <td>El texto tiene que coincidir <strong>exactamente</strong> con la
+          categoría de <code>rules.json</code>, tilde incluida.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="pmini">La versión que tienes sale siempre en la primera línea al
+    ejecutar (<code>CHANGELOG.md</code> cuenta qué cambió en cada una). Para
+    ver qué formato detecta realmente en un fichero, sin modificar nada:
+    <code>python bank_io.py movimientos.xls</code>.</p>
+</section>
+
+<section class="contenedor seccion-guia" id="privacidad">
+  <h2>Privacidad</h2>
+  <p>Todo el procesamiento ocurre en tu ordenador. La herramienta no abre
+    ninguna conexión de red, no envía datos a ningún servicio y no deja
+    copias fuera de la carpeta del proyecto.</p>
+  <p>Si mueves la carpeta a otro ordenador, cópiala entera. No hay nada más
+    que configurar.</p>
+</section>
+
 </main>
+
+<footer class="contenedor">
+  <div class="filas">
+    <span>eledger · movimientos bancarios</span>
+    <span>
+      <a href="https://github.com/ulmoexp/eledger">Código en GitHub</a>
+      · <a href="https://github.com/ulmoexp/eledger/blob/master/LICENSE">Licencia MIT</a>
+      · sin analítica, sin cookies
+    </span>
+  </div>
+</footer>
 
 </body>
 </html>

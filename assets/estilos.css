@@ -219,6 +219,11 @@ h2 + p.entradilla {
 }
 .aviso p { margin: 0; color: var(--tinta); }
 
+/* variante naranja, para los avisos de "cuidado con esto" (la mayoría de
+   los de la guía) frente a los verdes de "esto ya está resuelto" */
+.aviso.alerta { background: var(--aviso-cl); border-color: var(--aviso); }
+.aviso.alerta h3 { color: var(--aviso); }
+
 /* --- lista de qué hace --- */
 .rejilla {
   display: grid;
@@ -319,7 +324,7 @@ h2 + p.entradilla {
   font-weight: 700;
   font-size: 0.95rem;
 }
-.pasos code {
+code {
   background: var(--fondo);
   border: 1px solid var(--linea);
   border-radius: 4px;
@@ -327,6 +332,79 @@ h2 + p.entradilla {
   font-family: var(--fuente-mono);
   font-size: 0.9em;
 }
+
+/* --- guía (B3) --- */
+.seccion-guia { scroll-margin-top: 88px; }
+.seccion-guia h2 { margin-bottom: 4px; }
+.seccion-guia h3 { margin: 22px 0 8px; font-size: 1.05rem; }
+.seccion-guia p { margin: 0 0 14px; }
+
+/* dentro de la guía los avisos van intercalados en el texto, a ancho de
+   columna, no centrados como caja suelta como en la portada */
+.seccion-guia .aviso { max-width: none; margin: 20px 0; }
+
+.mut { color: var(--gris); }
+.pmini { color: var(--gris); font-size: 0.92rem; }
+
+.codigo {
+  background: var(--fondo);
+  border-left: 3px solid var(--acento);
+  border-radius: 4px;
+  padding: 14px 16px;
+  margin: 16px 0;
+  overflow-x: auto;
+}
+.codigo code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+.tabla-guia-scroll { overflow-x: auto; margin: 16px 0; }
+.tabla-guia { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.tabla-guia th {
+  background: var(--acento);
+  color: var(--blanco);
+  text-align: left;
+  font-weight: 700;
+  padding: 8px 12px;
+  white-space: nowrap;
+}
+.tabla-guia td { padding: 8px 12px; border-top: 1px solid var(--linea); vertical-align: top; }
+.tabla-guia tbody tr:nth-child(even) td { background: var(--fondo); }
+/* una celda entera en monoespaciado (la letra de columna, una clave...) no
+   necesita la caja de <code>: sería ruido repetido fila tras fila */
+.tabla-guia td code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--acento);
+}
+
+.flujo {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+.flujo .paso-flujo { background: var(--fondo); border-radius: 10px; padding: 16px 18px; }
+.flujo .paso-flujo strong { display: block; margin-bottom: 4px; }
+.flujo .paso-flujo span { color: var(--gris); font-size: 0.85rem; }
+.flujo .flecha { color: var(--acento); font-size: 1.3rem; text-align: center; }
+
+.indice-guia {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px 24px;
+}
+.grupo-indice h3 { margin: 0 0 8px; font-size: 1rem; color: var(--tinta); }
+.grupo-indice ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.grupo-indice a { color: var(--gris); text-decoration: none; font-size: 0.92rem; }
+.grupo-indice a:hover { color: var(--acento); }
 
 /* --- stub de páginas por construir --- */
 .stub { text-align: center; padding: 90px 0; }
@@ -358,4 +436,7 @@ footer a:hover { color: var(--acento); }
   .hoja-excel table { min-width: 480px; }
   footer .filas { flex-direction: column; text-align: center; gap: 8px; }
   .nav { justify-content: center; text-align: center; }
+  .indice-guia { grid-template-columns: 1fr; }
+  .flujo { grid-template-columns: 1fr; }
+  .flujo .flecha { transform: rotate(90deg); }
 }
