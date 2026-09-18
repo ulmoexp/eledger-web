@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Movimientos bancarios · eledger</title>
+<meta name="description" content="Herramienta local para clasificar tus movimientos bancarios. Todo se procesa en tu ordenador: sin servidor, sin cuenta, sin conexión a internet.">
+<link rel="stylesheet" href="assets/estilos.css">
+</head>
+<body>
+
+<header class="cabecera">
+  <nav class="nav contenedor">
+    <a class="marca" href="#">Movimientos bancarios<small>eledger</small></a>
+    <div class="enlaces">
+      <a href="guia/">Guía</a>
+      <a href="reglas.html">Reglas</a>
+      <a href="https://github.com/ulmoexp/eledger">GitHub</a>
+      <a class="boton" href="https://github.com/ulmoexp/eledger/releases/latest">Descargar</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <section class="hero contenedor">
+    <div class="insignia" aria-hidden="true">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg>
+    </div>
+    <h1>Tus movimientos bancarios, clasificados solos</h1>
+    <p class="sub">
+      Une los extractos de tu cuenta y tus tarjetas, los deduplica, los
+      clasifica por categorías y te deja un Excel con histórico y resumen
+      mensual. Sin hojas de cálculo a mano, sin apps de terceros.
+    </p>
+    <div class="cta">
+      <a class="boton" href="https://github.com/ulmoexp/eledger/releases/latest">Descargar la última versión</a>
+      <a class="boton-secundario" href="guia/">Ver la guía</a>
+    </div>
+  </section>
+
+  <section class="contenedor">
+    <div class="aviso">
+      <h3>🔒 Todo se queda en tu ordenador</h3>
+      <p>
+        No hay servidor, no hay cuenta que crear, no sale nada a internet.
+        El programa lee los ficheros que tú descargas del banco y escribe un
+        Excel al lado, en tu disco. Nada más. Es justo lo que hace falta
+        para poder darle tus movimientos bancarios a algo.
+      </p>
+    </div>
+  </section>
+
+  <section class="contenedor" id="que-hace">
+    <h2>Qué hace</h2>
+    <p class="entradilla">
+      Lee los extractos de cuenta y de tarjeta con el formato que sea,
+      detecta lo que hace falta y te ahorra los descuadres típicos de
+      llevarlo a mano.
+    </p>
+    <div class="rejilla">
+      <div class="tarjeta">
+        <span class="icono">🧾</span>
+        <h3>Une cuenta y tarjeta sin duplicar</h3>
+        <p>Detecta el formato real de cada extracto (los bancos llaman
+          «.xls» a cinco cosas distintas) y fusiona las descargas que se
+          solapan sin contar nada dos veces.</p>
+      </div>
+      <div class="tarjeta">
+        <span class="icono">💳</span>
+        <h3>Detecta el recibo de la tarjeta</h3>
+        <p>Si tu cuenta paga la tarjeta con un recibo, avisa y propone
+          excluirlo — si no, cada gasto de la tarjeta cuenta dos veces sin
+          que se note.</p>
+      </div>
+      <div class="tarjeta">
+        <span class="icono">🗂️</span>
+        <h3>Clasifica por reglas, no por IA</h3>
+        <p>Tus propias reglas mandan sobre una base de comercios conocidos
+          en toda España, que se actualiza con cada versión sin tocar las
+          tuyas.</p>
+      </div>
+      <div class="tarjeta">
+        <span class="icono">ℹ️</span>
+        <h3>Te dice qué falta por clasificar</h3>
+        <p>Al terminar, agrupa lo que ninguna regla ha sabido clasificar y
+          te propone la línea exacta para pegar en tus reglas.</p>
+      </div>
+      <div class="tarjeta">
+        <span class="icono">💰</span>
+        <h3>Saldo inicial real</h3>
+        <p>Si tu extracto trae el saldo de la cuenta, el resumen parte de
+          ese saldo real en vez de partir de 0.</p>
+      </div>
+      <div class="tarjeta">
+        <span class="icono">🏦</span>
+        <h3>Varias cuentas del mismo banco</h3>
+        <p>Si tienes más de una cuenta corriente, un movimiento idéntico en
+          las dos no se fusiona en uno solo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="vista-previa">
+   <div class="contenedor-ancho">
+    <h2 class="previa-titulo" style="text-align:center;">Así se ve tu resumen</h2>
+    <span class="previa-etiqueta">
+      Vista previa con datos inventados — no es una captura de pantalla,
+      es una reproducción fiel de las hojas que genera el programa.
+    </span>
+
+    <div class="hoja-excel">
+      <div class="rotulo">RESUMEN — resumen mensual por categorías</div>
+      <div class="scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Mes</th><th>Piso</th><th>Comida</th><th>Transporte</th>
+            <th>Ocio</th><th>Otros</th><th>Total Gastos</th><th>Ingresos</th>
+            <th>Balance</th><th>Acumulado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026-02</td><td class="num">650,00 €</td><td class="num">310,25 €</td>
+            <td class="num">95,40 €</td><td class="num">120,00 €</td><td class="num">60,15 €</td>
+            <td class="num fuerte">1.235,80 €</td><td class="num fuerte">2.100,00 €</td>
+            <td class="num fuerte">+864,20 €</td><td class="num fuerte">+5.864,20 €</td>
+          </tr>
+          <tr>
+            <td>2026-03</td><td class="num">650,00 €</td><td class="num">289,60 €</td>
+            <td class="num">110,00 €</td><td class="num">95,50 €</td><td class="num">40,00 €</td>
+            <td class="num fuerte">1.185,10 €</td><td class="num fuerte">2.100,00 €</td>
+            <td class="num fuerte">+914,90 €</td><td class="num fuerte">+6.779,10 €</td>
+          </tr>
+          <tr>
+            <td>2026-04</td><td class="num">650,00 €</td><td class="num">340,75 €</td>
+            <td class="num">88,20 €</td><td class="num">150,30 €</td><td class="num">25,00 €</td>
+            <td class="num fuerte">1.254,25 €</td><td class="num fuerte">2.100,00 €</td>
+            <td class="num fuerte">+845,75 €</td><td class="num fuerte">+7.624,85 €</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="hoja-excel">
+      <div class="rotulo">MOVIMIENTOS — histórico completo, movimiento a movimiento</div>
+      <div class="scroll">
+      <table>
+        <thead>
+          <tr><th>fecha</th><th>descripcion</th><th>importe</th><th>tipo</th><th>categoria</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>05/04/2026</td><td>NÓMINA EMPRESA S.L.</td><td class="num">+2.100,00 €</td><td>cuenta</td><td>Ingresos</td></tr>
+          <tr><td>07/04/2026</td><td>SUPERMERCADO CENTRO</td><td class="num">-64,30 €</td><td>cuenta</td><td>Comida</td></tr>
+          <tr><td>09/04/2026</td><td>RECIBO ALQUILER</td><td class="num">-650,00 €</td><td>cuenta</td><td>Piso</td></tr>
+          <tr><td>12/04/2026</td><td>GASOLINERA N-1</td><td class="num">-52,10 €</td><td>tarjeta</td><td>Transporte</td></tr>
+          <tr><td>15/04/2026</td><td>CINE Y CENA</td><td class="num">-38,90 €</td><td>tarjeta</td><td>Ocio</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+   </div>
+  </section>
+
+  <section class="contenedor" id="como-se-usa">
+    <h2>Cómo se usa</h2>
+    <p class="entradilla">Tres pasos, y puedes repetirlos cuantas veces
+      quieras: lo que ya estuviera no se duplica.</p>
+    <ol class="pasos">
+      <li><span>Descarga los extractos del banco (cuenta y tarjetas) y
+        déjalos, tal cual, en la carpeta <code>entrada/</code>.</span></li>
+      <li><span>Doble clic en <code>ejecutar.bat</code> (Windows) o
+        <code>ejecutar.command</code> (Mac).</span></li>
+      <li><span>Abre <code>datos/historico.xlsx</code>.</span></li>
+    </ol>
+  </section>
+
+</main>
+
+<footer class="contenedor">
+  <div class="filas">
+    <span>eledger · movimientos bancarios</span>
+    <span>
+      <a href="https://github.com/ulmoexp/eledger">Código en GitHub</a>
+      · <a href="https://github.com/ulmoexp/eledger/blob/master/LICENSE">Licencia MIT</a>
+      · sin analítica, sin cookies
+    </span>
+  </div>
+</footer>
+
+</body>
+</html>
