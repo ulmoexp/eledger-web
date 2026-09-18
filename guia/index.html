@@ -208,8 +208,7 @@
   <h2>rules.json · cómo se clasifica</h2>
   <p>Es un diccionario de <strong>texto a buscar → categoría</strong>. Gana
     la <strong>primera</strong> regla que casa, así que el orden del fichero
-    importa. La comparación no distingue mayúsculas ni acentos: <code>nomina</code>
-    encuentra «NÓMINA».</p>
+    importa.</p>
   <div class="tabla-guia-scroll">
   <table class="tabla-guia">
     <thead><tr><th>Fichero</th><th>Qué es</th></tr></thead>
@@ -219,59 +218,8 @@
     </tbody>
   </table>
   </div>
-  <p class="pmini">Para <strong>cambiar</strong> una regla de la base, repite
-    esa misma clave en la tuya. Para <strong>apagarla</strong>, ponla a
-    <code>null</code>.</p>
-  <div class="tabla-guia-scroll">
-  <table class="tabla-guia">
-    <thead><tr><th>Cómo se escribe</th><th>Qué significa</th><th>Ejemplo</th></tr></thead>
-    <tbody>
-      <tr>
-        <td><code>"mercadona"</code></td>
-        <td><strong>Inicio de palabra</strong> (por defecto).</td>
-        <td><code>veterin</code> encuentra VETERINARIO</td>
-      </tr>
-      <tr>
-        <td><code>"=dia"</code></td>
-        <td><strong>Palabra completa.</strong> Para claves cortas y ambiguas.</td>
-        <td><code>=dia</code> encuentra DIA pero no ME<strong>DIA</strong> MARKT</td>
-      </tr>
-      <tr>
-        <td><code>"~dia"</code></td>
-        <td><strong>En cualquier sitio.</strong> Solo si de verdad quieres pillarlo dentro de otra palabra.</td>
-        <td><code>~dia</code> encuentra ME<strong>DIA</strong> MARKT</td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
-  <h3>Qué se puede poner como categoría</h3>
-  <div class="tabla-guia-scroll">
-  <table class="tabla-guia">
-    <thead><tr><th>Valor</th><th>Qué hace</th></tr></thead>
-    <tbody>
-      <tr><td><code>"Comida"</code></td><td>Lo normal: casa y va a esa categoría.</td></tr>
-      <tr>
-        <td><code>{"+": "Ingresos", "-": "Ocio"}</code></td>
-        <td><strong>Según el signo.</strong> Un Bizum que <em>recibes</em> es
-          un ingreso; uno que <em>envías</em>, un gasto.</td>
-      </tr>
-      <tr><td><code>null</code></td><td><strong>Apaga</strong> la regla.</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <div class="aviso alerta">
-    <h3>Las devoluciones NO necesitan regla de signo</h3>
-    <p>Si te devuelven una compra, que ese abono reste de la misma categoría
-      es lo correcto. El signo solo hace falta cuando el importe positivo es
-      un concepto <strong>distinto</strong> del negativo (Bizum recibido /
-      enviado).</p>
-  </div>
-  <h3>Añadir una categoría nueva</h3>
-  <pre class="codigo"><code>"decathlon": "Ocio",
-"=gym":      "Ocio",</code></pre>
-  <p class="pmini">Usa <code>=</code> siempre que la palabra sea corta o
-    pueda aparecer dentro de otra: sin ese marcador, <code>bar</code> se
-    comería BARCELONA.</p>
+  <p class="pmini">La sintaxis completa, con ejemplos y las trampas típicas,
+    está en la página de <a href="../reglas.html">Reglas</a>.</p>
 </section>
 
 <section class="contenedor seccion-guia" id="probar-una-regla">

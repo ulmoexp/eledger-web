@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Reglas · Movimientos bancarios</title>
+<meta name="description" content="Sintaxis de rules.json: cómo escribir reglas de clasificación, las trampas del límite de palabra y las reglas por signo.">
 <link rel="stylesheet" href="assets/estilos.css">
 </head>
 <body>
@@ -20,17 +21,123 @@
   </nav>
 </header>
 
-<main class="contenedor stub">
-  <h1>La página de reglas llega en la próxima fase</h1>
-  <p>
-    Mientras tanto, la sintaxis de <code>rules.json</code> está explicada
-    con ejemplos dentro de <code>GUIA.pdf</code> (en el ZIP que te
-    descargas) y en los comentarios de
-    <a href="https://github.com/ulmoexp/eledger/blob/master/app/reglas.py">
-      <code>app/reglas.py</code></a>.
+<main>
+
+<section class="contenedor seccion-guia">
+  <h1>Escribir tus reglas</h1>
+  <p class="entradilla">
+    <code>ajustes/rules.json</code> es un diccionario de <strong>texto a
+    buscar → categoría</strong>. Gana la <strong>primera</strong> regla que
+    casa, así que el orden del fichero importa. No distingue mayúsculas ni
+    acentos: <code>nomina</code> encuentra «NÓMINA».
   </p>
-  <p><a class="boton-secundario" href="./">← Volver a portada</a></p>
+</section>
+
+<section class="contenedor seccion-guia" id="sintaxis">
+  <h2>Cómo se escribe una clave</h2>
+  <div class="tabla-guia-scroll">
+  <table class="tabla-guia">
+    <thead><tr><th>Cómo se escribe</th><th>Qué significa</th><th>Ejemplo</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>"mercadona"</code></td>
+        <td><strong>Inicio de palabra</strong> (por defecto).</td>
+        <td><code>veterin</code> encuentra VETERINARIO</td>
+      </tr>
+      <tr>
+        <td><code>"=dia"</code></td>
+        <td><strong>Palabra completa.</strong> Para claves cortas y ambiguas.</td>
+        <td>ver «Las trampas» abajo</td>
+      </tr>
+      <tr>
+        <td><code>"~dia"</code></td>
+        <td><strong>En cualquier sitio.</strong> Solo si de verdad quieres pillarlo dentro de otra palabra.</td>
+        <td><code>~dia</code> encuentra ME<strong>DIA</strong> MARKT</td>
+      </tr>
+      <tr>
+        <td><code>"re:..."</code></td>
+        <td><strong>Expresión regular</strong>, para casos raros.</td>
+        <td><code>re:^abono</code></td>
+      </tr>
+      <tr>
+        <td><code>"_nota"</code></td>
+        <td>Se <strong>ignora</strong>. Sirve para dejarte comentarios dentro del JSON.</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="contenedor seccion-guia" id="trampas">
+  <h2>Las trampas del límite de palabra</h2>
+  <p>Con claves cortas, una coincidencia de más se cuela fácil. Usa
+    <code>=</code> siempre que la palabra pueda ser el principio de otra:</p>
+  <div class="tabla-guia-scroll">
+  <table class="tabla-guia">
+    <thead><tr><th>Clave</th><th>Sin «=»</th><th>Con «=»</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>dia</code></td>
+        <td>se cuela en ME<strong>DIA</strong> MARKT</td>
+        <td><code>=dia</code> solo casa SUPERMERCADOS <strong>DIA</strong></td>
+      </tr>
+      <tr>
+        <td><code>vida</code></td>
+        <td>se cuela en NA<strong>VIDA</strong>D</td>
+        <td><code>=vida</code> solo casa SEGURO DE <strong>VIDA</strong></td>
+      </tr>
+      <tr>
+        <td><code>bar</code></td>
+        <td>se cuela en <strong>BAR</strong>CELONA</td>
+        <td><code>=bar</code> solo casa <strong>BAR</strong> LA ESQUINA</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="contenedor seccion-guia" id="reglas-por-signo">
+  <h2>Reglas por signo</h2>
+  <p>Un Bizum que <em>recibes</em> es un ingreso; uno que <em>envías</em>, un
+    gasto. Con un solo texto para los dos, los recibidos restarían de la
+    categoría del gasto:</p>
+  <pre class="codigo"><code>"bizum": {"+": "Ingresos", "-": "Ocio"}</code></pre>
+  <div class="aviso alerta">
+    <h3>Las devoluciones NO necesitan esto</h3>
+    <p>Si te devuelven una compra, que ese abono reste de la misma categoría
+      es lo correcto. El signo solo hace falta cuando el importe positivo es
+      un concepto <strong>distinto</strong> del negativo.</p>
+  </div>
+</section>
+
+<section class="contenedor seccion-guia" id="anadir-categoria">
+  <h2>Añadir una categoría nueva</h2>
+  <pre class="codigo"><code>"decathlon": "Ocio",
+"=gym":      "Ocio",</code></pre>
+  <p>Para probarla sin reprocesar todo el histórico:</p>
+  <pre class="codigo"><code>python app/reglas.py "BAR LA ESQUINA" "BARCELONA HOTEL"</code></pre>
+</section>
+
+<section class="contenedor seccion-guia" id="contribuir">
+  <h2>Contribuir a la base</h2>
+  <p><code>app/rules_base.json</code> trae reglas de comercios conocidos en
+    toda España. Abrirla a contribuciones por GitHub está en el roadmap:
+    próximamente.</p>
+</section>
+
 </main>
+
+<footer class="contenedor">
+  <div class="filas">
+    <span>eledger · movimientos bancarios</span>
+    <span>
+      <a href="https://github.com/ulmoexp/eledger">Código en GitHub</a>
+      · <a href="https://github.com/ulmoexp/eledger/blob/master/LICENSE">Licencia MIT</a>
+      · sin analítica, sin cookies
+    </span>
+  </div>
+</footer>
 
 </body>
 </html>
