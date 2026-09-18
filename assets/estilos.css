@@ -373,6 +373,9 @@ code {
   padding: 8px 12px;
   white-space: nowrap;
 }
+/* code hereda color: blanco sobre el fondo casi blanco de <code> lo dejaría
+   invisible dentro de una cabecera */
+.tabla-guia th code { background: rgba(255, 255, 255, 0.18); border-color: rgba(255, 255, 255, 0.4); color: var(--blanco); }
 .tabla-guia td { padding: 8px 12px; border-top: 1px solid var(--linea); vertical-align: top; }
 .tabla-guia tbody tr:nth-child(even) td { background: var(--fondo); }
 /* una celda entera en monoespaciado (la letra de columna, una clave...) no
