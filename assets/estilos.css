@@ -236,6 +236,14 @@ h2 + p.entradilla {
   padding: 20px 22px;
   background: var(--fondo);
 }
+/* la función que más distingue a la herramienta: a lo ancho, delante del
+   resto, y con el borde del acento para que se lea primero */
+.tarjeta.destacada {
+  grid-column: 1 / -1;
+  background: var(--blanco);
+  border-color: var(--acento);
+  border-left-width: 4px;
+}
 .tarjeta .icono { font-size: 1.4rem; margin-bottom: 8px; display: block; }
 .tarjeta h3 { margin: 0 0 6px; font-size: 1.02rem; }
 .tarjeta p { margin: 0; color: var(--gris); font-size: 0.94rem; }
