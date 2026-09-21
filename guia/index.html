@@ -93,7 +93,7 @@
   <ol class="pasos">
     <li><span>Descarga del banco los extractos de <strong>cuenta</strong> y de <strong>tarjeta</strong></span></li>
     <li><span>Suéltalos en la carpeta <code>entrada/</code> <span class="mut">tal cual: sin renombrar, sin convertir</span></span></li>
-    <li><span>Doble clic en <code>ejecutar.bat</code> <span class="mut">(Windows)</span> o <code>ejecutar.command</code> <span class="mut">(Mac)</span></span></li>
+    <li><span>Doble clic en <code>ejecutar.bat</code> <span class="mut">(Windows)</span>, <code>ejecutar.command</code> <span class="mut">(Mac)</span> o <code>ejecutar.sh</code> <span class="mut">(Linux)</span></span></li>
     <li><span>Revisa el resumen en pantalla</span></li>
     <li><span>Abre tu Excel: los movimientos ya están dentro</span></li>
   </ol>
@@ -123,8 +123,8 @@
 <section class="contenedor seccion-guia" id="instalacion">
   <h2>Instalación</h2>
   <p>Una sola vez: doble clic en <code>instalar.bat</code> (en Mac,
-    <code>instalar.command</code>). Tarda un par de minutos y no toca nada de
-    lo que ya tengas instalado.</p>
+    <code>instalar.command</code>; en Linux, <code>instalar.sh</code>). Tarda
+    un par de minutos y no toca nada de lo que ya tengas instalado.</p>
   <div class="tabla-guia-scroll">
   <table class="tabla-guia">
     <thead><tr><th>Si sale...</th><th>Qué hacer</th></tr></thead>
@@ -144,6 +144,11 @@
         <td>Clic derecho sobre él → <strong>Abrir</strong>. Solo la primera
           vez.</td>
       </tr>
+      <tr>
+        <td>Linux: el doble clic no lo ejecuta</td>
+        <td>Dale permisos desde una terminal en esa carpeta:
+          <code>chmod +x instalar.sh && ./instalar.sh</code></td>
+      </tr>
     </tbody>
   </table>
   </div>
@@ -155,7 +160,7 @@
   <h2>Estructura de carpetas</h2>
   <pre class="codigo"><code>proyecto/
 ├── instalar.bat     ← solo la primera vez
-├── ejecutar.bat      ← doble clic para procesar (ejecutar.command en Mac)
+├── ejecutar.bat      ← doble clic para procesar (.command en Mac, .sh en Linux)
 │
 ├── entrada/          ← AQUÍ sueltas lo del banco
 ├── datos/            ← LO INSUSTITUIBLE: tu histórico acumulado
