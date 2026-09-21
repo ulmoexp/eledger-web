@@ -33,6 +33,7 @@
     <div class="grupo-indice">
       <h3>Empezar</h3>
       <ul>
+        <li><a href="#privacidad">Privacidad · tus datos no salen del equipo</a></li>
         <li><a href="#chuleta">Chuleta</a></li>
         <li><a href="#que-hace">Qué hace</a></li>
         <li><a href="#instalacion">Instalación</a></li>
@@ -79,13 +80,20 @@
         <li><a href="#cuando-algo-no-sale">Cuando algo no sale</a></li>
       </ul>
     </div>
-    <div class="grupo-indice">
-      <h3>Privacidad</h3>
-      <ul>
-        <li><a href="#privacidad">Uso local · los datos no salen del equipo</a></li>
-      </ul>
-    </div>
   </div>
+</section>
+
+<section class="contenedor seccion-guia" id="privacidad">
+  <h2>Privacidad</h2>
+  <div class="aviso">
+    <h3>🔒 Todo se queda en tu ordenador</h3>
+    <p>Todo el procesamiento ocurre en tu ordenador. La herramienta no abre
+      ninguna conexión de red, no envía datos a ningún servicio y no deja
+      copias fuera de la carpeta donde la tienes instalada. No hay cuenta que
+      crear ni servidor detrás.</p>
+  </div>
+  <p>Si mueves la carpeta a otro ordenador, cópiala entera. No hay nada más
+    que configurar.</p>
 </section>
 
 <section class="contenedor seccion-guia" id="chuleta">
@@ -110,7 +118,9 @@
   <p>Lee los movimientos de la cuenta y de todas las tarjetas, los junta en
     una sola tabla, descarta los movimientos que no quieres contar, los
     clasifica por categorías y genera un Excel listo para pegar en tu hoja de
-    cálculo.</p>
+    cálculo. Al terminar, te enseña qué cargos se repiten cada mes o cada año
+    (suscripciones, cuotas, seguros) y cuánto suman al año; sin opinar sobre
+    ninguno.</p>
   <div class="flujo">
     <div class="paso-flujo"><strong>Entrada</strong><span>cuenta + tarjetas<br>cualquier formato</span></div>
     <div class="flecha">→</div>
@@ -451,15 +461,6 @@ Acumulado    = Extras - Deuda + Balance</code></pre>
     ejecutar (<code>CHANGELOG.md</code> cuenta qué cambió en cada una). Para
     ver qué formato detecta realmente en un fichero, sin modificar nada:
     <code>python bank_io.py movimientos.xls</code>.</p>
-</section>
-
-<section class="contenedor seccion-guia" id="privacidad">
-  <h2>Privacidad</h2>
-  <p>Todo el procesamiento ocurre en tu ordenador. La herramienta no abre
-    ninguna conexión de red, no envía datos a ningún servicio y no deja
-    copias fuera de la carpeta donde la tienes instalada.</p>
-  <p>Si mueves la carpeta a otro ordenador, cópiala entera. No hay nada más
-    que configurar.</p>
 </section>
 
 </main>
