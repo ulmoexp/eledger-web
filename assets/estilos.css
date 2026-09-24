@@ -635,17 +635,30 @@ footer a:hover { color: var(--acento); }
   top: 12%;
   box-shadow: 0 0 0 10px color-mix(in srgb, var(--astro) 22%, transparent),
               0 0 60px color-mix(in srgb, var(--astro) 60%, transparent);
-  transition: left 1.6s ease, top 1.6s ease, background-color 1.6s ease, box-shadow 1.6s ease;
+  transition: left 1.6s ease, top 1.6s ease, background-color 1.6s ease,
+              box-shadow 1.6s ease, filter 1.6s ease;
 }
-/* la luna es el mismo círculo con un mordisco del color del cielo */
+/* La luna es una media luna RECORTADA (mask), no un disco con un círculo
+   del color del cielo encima: el resplandor del disco era un box-shadow
+   redondo, y el mordisco tapaba la luna pero dejaba el halo de luna llena
+   asomando alrededor. De noche el disco y su box-shadow se apagan y el
+   halo lo pone drop-shadow, que sigue la forma de lo que se ve. */
 .astro::after {
   content: "";
   position: absolute;
-  inset: -6% -6% 6% 30%;
+  inset: 0;
   border-radius: 50%;
-  background: var(--cielo-a);
+  background: var(--astro);
+  -webkit-mask: radial-gradient(ellipse 38% 50% at 68% 44%, transparent 98%, #000 100%);
+          mask: radial-gradient(ellipse 38% 50% at 68% 44%, transparent 98%, #000 100%);
   opacity: 0;
   transition: opacity 1.6s ease;
+}
+.escena[data-momento="noche"] .astro {
+  background-color: transparent;
+  box-shadow: 0 0 0 10px transparent, 0 0 60px transparent;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--astro) 55%, transparent))
+          drop-shadow(0 0 22px color-mix(in srgb, var(--astro) 45%, transparent));
 }
 .escena[data-momento="noche"] .astro::after { opacity: 1; }
 
