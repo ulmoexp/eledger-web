@@ -13,9 +13,9 @@
   var MOMENTOS = ["alba", "dia", "tarde", "noche"];
   // posición del sol (o la luna) en % del marco, por momento
   var ASTRO = {
-    alba:  { left: 8,  top: 40 },
+    alba:  { left: 3,  top: 20 },
     dia:   { left: 64, top: 10 },
-    tarde: { left: 76, top: 38 },
+    tarde: { left: 84, top: 30 },
     noche: { left: 70, top: 9 }
   };
 
@@ -47,8 +47,10 @@
     }, cielo);
   }
   for (i = 0; i < 22; i++) {
+    // sin briznas encima del camino, que baja entre el 22% y el 42%
+    var x = azar(0, 80);
     crear("brizna", {
-      left: azar(0, 100) + "%",
+      left: (x < 22 ? x : x + 20) + "%",
       height: azar(10, 22) + "px",
       transform: "rotate(" + azar(-12, 12) + "deg)",
       "animation-delay": azar(-4, 0) + "s"
