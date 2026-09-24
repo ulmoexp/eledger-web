@@ -99,7 +99,7 @@
     <li><span>Suéltalos en la carpeta <code>entrada/</code> <span class="mut">tal cual: sin renombrar, sin convertir</span></span></li>
     <li><span>Doble clic en <code>ejecutar.bat</code> <span class="mut">(Windows)</span>, <code>ejecutar.command</code> <span class="mut">(Mac)</span> o <code>ejecutar.sh</code> <span class="mut">(Linux)</span></span></li>
     <li><span>Revisa el resumen en pantalla <span class="mut">(los avisos, si hay, salen juntos al final)</span></span></li>
-    <li><span>Pulsa <strong>1</strong> para abrir el histórico <span class="mut">(o 2 para abrir su carpeta; Intro cierra)</span></span></li>
+    <li><span>Pulsa <strong>1</strong> para abrir el histórico <span class="mut">(2 abre su carpeta, 3 ejecuta de nuevo; Intro cierra)</span></span></li>
   </ol>
   <div class="aviso">
     <h3>No hay que preparar nada</h3>
@@ -290,7 +290,7 @@ BAR LA ESQUINA      ->  Ocio        [=bar]</code></pre>
       <tr>
         <td><code>RESUMEN</code></td>
         <td>La matriz mes × categoría con los totales, el balance y el
-          arrastre.</td>
+          saldo de la cuenta.</td>
       </tr>
     </tbody>
   </table>
@@ -354,21 +354,25 @@ BAR LA ESQUINA      ->  Ocio        [=bar]</code></pre>
 
 <section class="contenedor seccion-guia" id="como-se-calcula-el-resumen">
   <h2>Cómo se calcula el resumen</h2>
-  <pre class="codigo"><code>Total Gastos = suma de las categorías de gasto
-Ingresos     = suma de las categorías de ingreso
-Balance      = Ingresos - Total Gastos
+  <pre class="codigo"><code>Total Gastos      = suma de las categorías de gasto
+Ingresos          = suma de las categorías de ingreso
+Balance           = Ingresos - Total Gastos
 
-Extras       = lo que se arrastra A FAVOR del mes anterior
-Deuda        = lo que se arrastra EN CONTRA del mes anterior
-Acumulado    = Extras - Deuda + Balance</code></pre>
+Fuera del balance = lo que movió la cuenta sin ser gasto ni ingreso
+Acumulado         = Acumulado del mes anterior + Balance
+                    + Fuera del balance</code></pre>
   <p class="pmini"><strong>Balance</strong> es el resultado del mes por sí
-    solo; <strong>Acumulado</strong> es el que responde a «¿voy bien o voy
-    mal?».</p>
+    solo; <strong>Acumulado</strong> es el saldo real de tu cuenta al cerrar
+    el mes. <strong>Fuera del balance</strong> explica la diferencia:
+    traspasos a otras cuentas tuyas, lo excluido y las compras con tarjeta
+    que el banco aún no ha cargado.</p>
   <div class="aviso">
     <h3>De dónde parte el Acumulado</h3>
     <p>Si tu extracto de cuenta trae columna de saldo, el Acumulado del
-      primer mes empieza en el saldo real de la cuenta, no en 0. Se detecta
-      solo y se avisa por pantalla de qué saldo ha usado.</p>
+      primer mes empieza en el saldo real de la cuenta, no en 0. Después
+      comprueba que el saldo calculado coincide con el del extracto; si no,
+      te dice en qué fecha deja de cuadrar y por cuánto (casi siempre falta
+      un extracto entre medias).</p>
   </div>
 </section>
 
@@ -429,6 +433,12 @@ Acumulado    = Extras - Deuda + Balance</code></pre>
   <table class="tabla-guia">
     <thead><tr><th>Síntoma</th><th>Qué hacer</th></tr></thead>
     <tbody>
+      <tr>
+        <td><em>«Hay ficheros abiertos»</em></td>
+        <td>Tienes el histórico abierto. Guárdalo, ciérralo y pulsa Intro.
+          Con <strong>C</strong> lo dejas abierto y el resultado va a una
+          copia, pero el histórico no se actualiza hasta que lo cierres.</td>
+      </tr>
       <tr>
         <td><em>«La carpeta entrada/ está vacía»</em></td>
         <td>Comprueba que lo que has soltado no es un <code>.zip</code> ni un
