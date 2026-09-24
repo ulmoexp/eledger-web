@@ -301,16 +301,18 @@ p.entradilla {
   font-family: var(--fuente-hoja);
   font-size: 0.8rem;
 }
+/* las cabeceras se parten en dos líneas, como en el Excel real (wrap_text):
+   con «Fuera del balance», en una sola línea la tabla de RESUMEN no cabía */
 .hoja-excel th {
   background: var(--cabecera-excel);
   color: var(--blanco);
   font-weight: 700;
   text-align: left;
-  padding: 8px 12px;
-  white-space: nowrap;
+  vertical-align: bottom;
+  padding: 8px 10px;
 }
 .hoja-excel td {
-  padding: 7px 12px;
+  padding: 7px 10px;
   border-top: 1px solid #E3E6E9;
   white-space: nowrap;
 }

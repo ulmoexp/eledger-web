@@ -5,10 +5,10 @@ qué hace, cómo se instala y la guía de uso. Estática, sin build, servida
 por GitHub Pages desde la raíz de `main`.
 
 ```
-index.html       portada
-guia/             la guía (en construcción)
-reglas.html       sintaxis de rules.json (en construcción)
-assets/           CSS compartido
+index.html        portada
+guia/             la guía de uso
+reglas.html       sintaxis de rules.json
+assets/           CSS compartido y escena.js (la escena de la portada)
 ```
 
 ## Ver los cambios en local

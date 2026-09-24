@@ -124,7 +124,7 @@
       <div class="tarjeta">
         <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" stroke-linejoin="miter"><path d="M3 9.5 12 4l9 5.5"/><path d="M5.5 10v8M10 10v8M14 10v8M18.5 10v8"/><path d="M3 20.5h18"/></svg>
         <h3>Varias cuentas del mismo banco</h3>
-        <p>Un movimiento idéntico en dos cuentas no se fusiona en uno.</p>
+        <p>Si las declaras en <code>cuentas.json</code>, un movimiento idéntico en dos cuentas no se fusiona en uno.</p>
       </div>
     </div>
   </section>
@@ -144,7 +144,7 @@
           <tr>
             <th>Mes</th><th>Piso</th><th>Comida</th><th>Transporte</th>
             <th>Ocio</th><th>Otros</th><th>Total Gastos</th><th>Ingresos</th>
-            <th>Balance</th><th>Acumulado</th>
+            <th>Balance</th><th>Fuera del balance</th><th>Acumulado</th>
           </tr>
         </thead>
         <tbody>
@@ -152,19 +152,19 @@
             <td>2026-02</td><td class="num">650,00 €</td><td class="num">310,25 €</td>
             <td class="num">95,40 €</td><td class="num">120,00 €</td><td class="num">60,15 €</td>
             <td class="num fuerte">1.235,80 €</td><td class="num fuerte">2.100,00 €</td>
-            <td class="num fuerte">+864,20 €</td><td class="num fuerte">+5.864,20 €</td>
+            <td class="num fuerte">864,20 €</td><td class="num">0,00 €</td><td class="num fuerte">5.864,20 €</td>
           </tr>
           <tr>
             <td>2026-03</td><td class="num">650,00 €</td><td class="num">289,60 €</td>
             <td class="num">110,00 €</td><td class="num">95,50 €</td><td class="num">40,00 €</td>
             <td class="num fuerte">1.185,10 €</td><td class="num fuerte">2.100,00 €</td>
-            <td class="num fuerte">+914,90 €</td><td class="num fuerte">+6.779,10 €</td>
+            <td class="num fuerte">914,90 €</td><td class="num">0,00 €</td><td class="num fuerte">6.779,10 €</td>
           </tr>
           <tr>
             <td>2026-04</td><td class="num">650,00 €</td><td class="num">340,75 €</td>
             <td class="num">88,20 €</td><td class="num">150,30 €</td><td class="num">25,00 €</td>
             <td class="num fuerte">1.254,25 €</td><td class="num fuerte">2.100,00 €</td>
-            <td class="num fuerte">+845,75 €</td><td class="num fuerte">+7.624,85 €</td>
+            <td class="num fuerte">845,75 €</td><td class="num">0,00 €</td><td class="num fuerte">7.624,85 €</td>
           </tr>
         </tbody>
       </table>
@@ -189,7 +189,7 @@
           <tr><th>fecha</th><th>descripcion</th><th>importe</th><th>tipo</th><th>categoria</th></tr>
         </thead>
         <tbody>
-          <tr><td>05/04/2026</td><td>NÓMINA EMPRESA S.L.</td><td class="num">+2.100,00 €</td><td>cuenta</td><td>Ingresos</td></tr>
+          <tr><td>05/04/2026</td><td>NÓMINA EMPRESA S.L.</td><td class="num">2.100,00 €</td><td>cuenta</td><td>Ingresos</td></tr>
           <tr><td>07/04/2026</td><td>SUPERMERCADO CENTRO</td><td class="num">-64,30 €</td><td>cuenta</td><td>Comida</td></tr>
           <tr><td>09/04/2026</td><td>RECIBO ALQUILER</td><td class="num">-650,00 €</td><td>cuenta</td><td>Piso</td></tr>
           <tr><td>12/04/2026</td><td>GASOLINERA N-1</td><td class="num">-52,10 €</td><td>tarjeta</td><td>Transporte</td></tr>
@@ -205,6 +205,9 @@
     <h2>Cómo se usa</h2>
     <p class="entradilla">Repítelo cuando quieras: nada se duplica.</p>
     <ol class="pasos">
+      <li><span>La primera vez, doble clic en <code>instalar.bat</code>
+        (<code>.command</code> en Mac, <code>.sh</code> en Linux). Con el
+        <code>.exe</code> no hace falta.</span></li>
       <li><span>Deja los extractos del banco, tal cual, en <code>entrada/</code>.</span></li>
       <li><span>Doble clic en <code>ejecutar.bat</code> (Windows),
         <code>.command</code> (Mac) o <code>.sh</code> (Linux).</span></li>
