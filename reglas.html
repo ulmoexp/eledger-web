@@ -111,11 +111,37 @@
   </div>
 </section>
 
+<section class="contenedor seccion-guia" id="un-solo-signo-y-null">
+  <h2>Un solo signo, o apagar una regla</h2>
+  <div class="tabla-guia-scroll">
+  <table class="tabla-guia">
+    <thead><tr><th>Valor</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>"amazon": {"-": "Otros"}</code></td>
+        <td><strong>Solo un lado.</strong> Los movimientos del otro signo
+          ignoran esta regla y siguen buscando más abajo.</td>
+      </tr>
+      <tr>
+        <td><code>"netflix": null</code></td>
+        <td><strong>Apaga la regla.</strong> Sirve para desactivar una de la
+          base sin editarla: repites la clave en tu fichero con
+          <code>null</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
 <section class="contenedor seccion-guia" id="anadir-categoria">
-  <h2>Añadir una categoría nueva</h2>
+  <h2>Añadir reglas</h2>
   <pre class="codigo"><code>"decathlon": "Ocio",
 "=gym":      "Ocio",</code></pre>
-  <p>Para probarla sin reprocesar todo el histórico:</p>
+  <p>Si la categoría es <strong>nueva</strong>, declárala también en
+    <code>categorias.json</code> (como gasto, ingreso o neutra): si no, las
+    reglas que la usan se descartan y se avisa al ejecutar, porque no sumaría
+    en ninguna columna del resumen.</p>
+  <p>Para probarlas sin reprocesar todo el histórico:</p>
   <pre class="codigo"><code>python app/reglas.py "BAR LA ESQUINA" "BARCELONA HOTEL"</code></pre>
 </section>
 

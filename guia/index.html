@@ -88,7 +88,8 @@
       copias fuera de la carpeta donde la tienes instalada. No hay cuenta que
       crear ni servidor detrás.</p>
   </div>
-  <p>Si mueves la carpeta a otro ordenador, cópiala entera. No hay nada más
+  <p>Si mueves la carpeta a otro ordenador, cópiala entera y vuelve a lanzar
+    el instalador (con el <code>.exe</code> no hace falta). No hay nada más
     que configurar.</p>
 </section>
 
@@ -122,7 +123,7 @@
     <div class="flecha">→</div>
     <div class="paso-flujo"><strong>Proceso</strong><span>unificar · excluir<br>clasificar · ajustar mes</span></div>
     <div class="flecha">→</div>
-    <div class="paso-flujo"><strong>Salida</strong><span>movimientos_limpios<br>movimientos_excluidos</span></div>
+    <div class="paso-flujo"><strong>Salida</strong><span>historico.xlsx<br>movimientos_limpios · excluidos</span></div>
   </div>
 </section>
 
@@ -158,7 +159,7 @@
     </tbody>
   </table>
   </div>
-  <p class="pmini">Si lo que te han dado es un <code>Movimientos.exe</code>,
+  <p class="pmini">Si lo que te han dado es un <code>eledger.exe</code>,
     no hay que instalar nada: doble clic y ya.</p>
 </section>
 
@@ -237,10 +238,11 @@
     todo:</p>
   <pre class="codigo"><code>python app/reglas.py "MEDIA MARKT ONLINE" "BAR LA ESQUINA"
 
-MEDIA MARKT ONLINE  ->  Otros       [sin regla]
-BAR LA ESQUINA      ->  Ocio        [=bar]</code></pre>
+MEDIA MARKT ONLINE  ->  Otros                    [media markt · base]
+BAR LA ESQUINA      ->  Ocio                     [=bar · base]</code></pre>
   <p class="pmini">Si pones un número al final, se usa como importe: es la
-    forma de comprobar las reglas que dependen del signo.</p>
+    forma de comprobar las reglas que dependen del signo. Las reglas que
+    vienen de la base salen marcadas con <code>· base</code>.</p>
 </section>
 
 <section class="contenedor seccion-guia" id="exclude-patterns-json">
@@ -277,22 +279,24 @@ BAR LA ESQUINA      ->  Ocio        [=bar]</code></pre>
   <h2>El histórico</h2>
   <p><code>historico.xlsx</code> acumula todo lo que has ido procesando,
     ejecución tras ejecución. Puedes borrar de <code>entrada/</code> los
-    extractos viejos: lo que ya entró, entrado se queda. Tiene dos hojas:</p>
+    extractos viejos: lo que ya entró, entrado se queda. Se abre por
+    RESUMEN, y tiene además una hoja <code>_meta</code> con la versión que lo
+    escribió, que no hace falta tocar:</p>
   <div class="tabla-guia-scroll">
   <table class="tabla-guia">
     <thead><tr><th>Hoja</th><th>Qué contiene</th></tr></thead>
     <tbody>
-      <tr>
-        <td><code>MOVIMIENTOS</code></td>
-        <td>Todos los movimientos, uno por fila. La cabecera naranja señala
-          la única columna que puedes escribir tú.</td>
-      </tr>
       <tr>
         <td><code>RESUMEN</code></td>
         <td>La matriz mes × categoría con los totales, el balance y el
           saldo de la cuenta. Debajo, tres gráficos: el Acumulado, los
           ingresos y gastos de cada mes, y el gasto medio al mes por
           categoría.</td>
+      </tr>
+      <tr>
+        <td><code>MOVIMIENTOS</code></td>
+        <td>Todos los movimientos, uno por fila. La cabecera naranja señala
+          la única columna que puedes escribir tú.</td>
       </tr>
     </tbody>
   </table>
@@ -332,7 +336,7 @@ BAR LA ESQUINA      ->  Ocio        [=bar]</code></pre>
     <h3>Escribe solo en esa columna</h3>
     <p>El resto de la hoja se regenera en cada ejecución. Por si acaso,
       antes de cada escritura se guarda una copia del histórico en
-      <code>copias/</code>.</p>
+      <code>datos/copias/</code>.</p>
   </div>
 </section>
 
@@ -474,8 +478,9 @@ Acumulado         = Acumulado del mes anterior + Balance
   </div>
   <p class="pmini">La versión que tienes sale siempre en la primera línea al
     ejecutar (<code>CHANGELOG.md</code> cuenta qué cambió en cada una). Para
-    ver qué formato detecta realmente en un fichero, sin modificar nada:
-    <code>python bank_io.py movimientos.xls</code>.</p>
+    ver qué formato detecta realmente en un fichero, sin modificar nada:</p>
+  <pre class="codigo"><code>app\.venv\Scripts\python app\bank_io.py entrada\movimientos.xls   (Windows)
+app/.venv/bin/python app/bank_io.py entrada/movimientos.xls   (Mac, Linux)</code></pre>
 </section>
 
 </main>
