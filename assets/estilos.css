@@ -318,6 +318,32 @@ p.entradilla {
 .hoja-excel td.num { text-align: right; font-variant-numeric: tabular-nums; }
 .hoja-excel td.fuerte { font-weight: 700; }
 .hoja-excel .scroll { overflow-x: auto; }
+/* uno de los gráficos que el programa pone bajo la tabla de RESUMEN, con
+   el azul del gráfico real y en sans, como el resto de la hoja */
+.grafico-hoja {
+  margin: 0;
+  padding: 18px 16px 20px;
+  border-top: 1.5px solid var(--tinta);
+  font-family: var(--fuente-hoja);
+  font-size: 0.8rem;
+}
+.grafico-hoja figcaption {
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.grafico-hoja .barras {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 8px 10px;
+  align-items: center;
+  max-width: 620px;
+  margin: 0 auto;
+}
+.grafico-hoja .nombre { text-align: right; color: var(--gris); }
+.grafico-hoja .pista { display: block; border-left: 1px solid var(--gris-cl); }
+.grafico-hoja .barra { display: block; height: 14px; background: #2A78D6; }
+.grafico-hoja .valor { font-variant-numeric: tabular-nums; }
 
 /* --- pasos --- */
 .pasos {
