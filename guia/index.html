@@ -418,13 +418,20 @@ Acumulado         = Acumulado del mes anterior + Balance
 
 <section class="contenedor seccion-guia" id="uso-en-excel">
   <h2>Uso en Excel</h2>
-  <p>Tus fórmulas no cambian: el orden de columnas se mantiene.</p>
+  <p>La hoja RESUMEN ya trae las sumas por mes y categoría. Si prefieres
+    montar las tuyas en tu propio Excel (pegando
+    <code>movimientos_limpios.xlsx</code> en las columnas A-G, o con la
+    sincronización), las columnas están siempre en el mismo sitio, así que
+    tus fórmulas no se rompen de una versión a otra.</p>
   <pre class="codigo"><code>=SUMAR.SI.CONJUNTO(MOVIMIENTOS!C:C;
                    MOVIMIENTOS!G:G; "Comida";
                    MOVIMIENTOS!F:F; "2026-04")</code></pre>
   <p class="pmini">C es importe, G es categoría, F es el mes contable — usa
     siempre <code>F</code>, no <code>E</code>, para que el ajuste de nóminas
-    cuente.</p>
+    cuente. Los gastos salen en negativo: ponle un <code>-</code> delante si
+    los quieres en positivo (no uses <code>ABS()</code>, que hace pasar las
+    devoluciones por gasto). Si Excel se queja de los separadores, cambia
+    <code>;</code> por <code>,</code>.</p>
 </section>
 
 <section class="contenedor seccion-guia" id="cuando-algo-no-sale">
