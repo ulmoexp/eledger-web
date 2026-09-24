@@ -84,7 +84,11 @@ a:hover { text-decoration-thickness: 2px; }
 
 .marca {
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+  /* mismo truco que en el índice de la guía: engorda la negrita fina de
+     la máquina de escribir */
+  -webkit-text-stroke: 0.6px currentColor;
   color: var(--tinta);
   text-decoration: none;
   white-space: nowrap;
@@ -92,6 +96,7 @@ a:hover { text-decoration-thickness: 2px; }
 
 .marca small {
   font-weight: 400;
+  -webkit-text-stroke: 0;
   font-size: 0.8rem;
   color: var(--gris);
   margin-left: 8px;
@@ -153,7 +158,7 @@ p.entradilla {
 /* --- portada: titular + escena --- */
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-areas:
     "texto escena"
     "privacidad escena";
@@ -228,6 +233,7 @@ p.entradilla {
 
 /* --- lista de qué hace: sin cajas, renglones separados por rayas --- */
 .rejilla {
+  margin-top: 28px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0 48px;
@@ -353,6 +359,7 @@ code {
 /* la guía y las reglas son páginas largas de consulta: menos aire entre
    secciones que en la portada */
 .seccion-guia { scroll-margin-top: 24px; padding-block: 40px; }
+#indice h1 { margin: 0 0 36px; }
 .seccion-guia h1 { font-size: clamp(1.7rem, 3.4vw, 2.2rem); margin: 0 0 14px; }
 /* encabezados de la guía y las reglas: numerados (el mismo número que en
    el índice), más grandes y subrayados con una raya de tinta, para que al
@@ -470,16 +477,28 @@ main { counter-reset: apartado; }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 28px 32px;
 }
+/* títulos de grupo del índice: en verde, más grandes y con una raya
+   gruesa del mismo color, para que se lean como cabeceras de columna y no
+   como una etiqueta pequeña */
 .grupo-indice h3 {
-  margin: 0 0 12px;
-  padding-bottom: 6px;
-  border-bottom: 1.5px solid var(--tinta);
-  font-size: 0.82rem;
-  letter-spacing: 0.08em;
+  margin: 0 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 2.5px solid var(--acento);
+  font-size: 1.05rem;
+  font-weight: 700;
+  /* las negritas de máquina de escribir son finas: un trazo del mismo
+     color las engorda un poco sin cambiar de fuente */
+  -webkit-text-stroke: 0.5px currentColor;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  color: var(--tinta);
+  color: var(--acento);
+  line-height: 1.3;
 }
-.grupo-indice ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+/* subgrid: los títulos de una misma fila comparten alto, así que si uno
+   ocupa dos líneas las rayas siguen alineadas en la fila */
+.grupo-indice { display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: 0; }
+.grupo-indice h3 { align-self: end; }
+.grupo-indice ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; align-content: start; }
 .grupo-indice a { color: var(--tinta); text-decoration: none; font-size: 0.92rem; }
 .indice-guia { counter-reset: entrada; }
 .grupo-indice li { counter-increment: entrada; display: flex; gap: 10px; }
@@ -546,7 +565,7 @@ footer a:hover { color: var(--acento); }
   --niebla: 0;
 
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 5 / 4;
   overflow: hidden;
   border: 1.5px solid var(--tinta);
   box-shadow: 6px 6px 0 var(--linea);
@@ -686,14 +705,16 @@ footer a:hover { color: var(--acento); }
   background: var(--prado);
 }
 
+/* el camino baja de la puerta (x ≈ 30%) hasta el borde de abajo y pasa por
+   la abertura de la valla; se ensancha hacia delante por la perspectiva */
 .camino {
-  left: 30%; width: 46%; top: 73%; bottom: 0;
+  left: 18%; width: 30%; bottom: 0; height: 24%;
   background: var(--camino);
-  clip-path: polygon(38% 0, 50% 0, 100% 100%, 0 100%);
+  clip-path: polygon(31% 0, 49% 0, 80% 100%, 20% 100%);
 }
 
 /* --- la casa --- */
-.casa { left: 7%; width: 52%; bottom: 25%; height: 38%; }
+.casa { left: 8%; width: 44%; bottom: 24%; height: 50%; }
 .casa > div { position: absolute; }
 .chimenea { left: 66%; top: 6%; width: 9%; height: 30%; background: var(--tejado); filter: brightness(0.8); }
 .chimenea::before {
@@ -803,7 +824,7 @@ footer a:hover { color: var(--acento); }
 }
 
 /* --- árbol --- */
-.arbol { left: 64%; width: 28%; bottom: 25%; height: 42%; transform-origin: 50% 100%; animation: mecer 7s ease-in-out infinite; }
+.arbol { left: 62%; width: 22%; bottom: 24%; height: 50%; transform-origin: 50% 100%; animation: mecer 7s ease-in-out infinite; }
 .arbol > div { position: absolute; border-radius: 50%; background: var(--copa); }
 .arbol .tronco { left: 46%; width: 9%; bottom: 0; height: 36%; border-radius: 2px; background: var(--madera); }
 .arbol .c1 { left: 0; width: 62%; bottom: 26%; aspect-ratio: 1; }
@@ -812,14 +833,26 @@ footer a:hover { color: var(--acento); }
 @keyframes mecer { 50% { transform: rotate(1.4deg); } }
 
 /* --- valla y primer plano --- */
+/* la valla va en dos tramos, con la entrada de la parcela donde la cruza
+   el camino, entre dos postes más gruesos */
 .valla {
-  left: 0; right: 0; bottom: 9%; height: 7%;
+  bottom: 8%; height: 8%;
   background:
     linear-gradient(var(--valla), var(--valla)) 0 30% / 100% 10% no-repeat,
     linear-gradient(var(--valla), var(--valla)) 0 70% / 100% 10% no-repeat,
     repeating-linear-gradient(to right, var(--valla) 0 5px, transparent 5px 34px);
   opacity: 0.9;
 }
+.valla.izq { left: 0; width: 24%; }
+.valla.dcha { left: 39%; right: 0; }
+.poste {
+  bottom: 7%; width: 1.4%; height: 11%;
+  background: var(--valla);
+  filter: brightness(0.85);
+}
+.poste.p1 { left: 23%; }
+.poste.p2 { left: 38.6%; }
+
 .primer-plano {
   left: -5%; right: -5%; bottom: 0; height: 12%;
   background: var(--prado-2);
@@ -872,10 +905,7 @@ footer a:hover { color: var(--acento); }
     grid-template-areas: "texto" "privacidad" "escena";
     padding-top: 36px;
   }
-  .hero .escena-marco { max-width: 420px; width: 100%; justify-self: center; }
-  .escena { aspect-ratio: 5 / 4; }
-  .casa { bottom: 21%; height: 44%; left: 10%; width: 44%; }
-  .arbol { bottom: 21%; height: 48%; width: 24%; }
+  .hero .escena-marco { max-width: 520px; width: 100%; justify-self: center; }
 }
 
 @media (max-width: 640px) {
