@@ -272,12 +272,12 @@
     });
   }
   ["#F2C94C", "#F4F1E8"].forEach(function (c, n) {
-    crear("mariposa", {
-      left: (azar(6, 16) + n * 40) + "%",
-      top: azar(64, 78) + "%",
-      "--color": c,
-      "--retardo": azar(-16, 0) + "s"
+    var m = crear("mariposa", {
+      left: (azar(10, 30) + n * 40) + "%",
+      top: azar(58, 70) + "%",
+      "--color": c
     });
+    crear("alas", { "animation-delay": azar(-0.9, 0) + "s" }, m);
   });
   // la sombra: una persona de medio cuerpo, cabeza, cuello y hombros
   var sombra = ventanas.v1 ? crear("sombra", {}, ventanas.v1) : null;
@@ -472,26 +472,62 @@
     }, 3200);
   }
 
-  // una mariposa asustada sale volando y, al rato, vuelve con un fundido
+  // Las mariposas: vuelan de un punto a otro por encima del prado y, a
+  // ratos, bajan a posarse en la hierba (el jardín o delante de la valla,
+  // nunca en el camino), donde solo mueven las alas despacio. Si se les
+  // pasa el ratón, salen volando por arriba y, al rato, vuelven desde un
+  // lado con un fundido.
+  function puntoEnElAire() { return [azar(6, 88), azar(55, 72)]; }
+  function puntoEnElSuelo() {
+    return Math.random() < 0.5
+      ? [azar(44, 90), azar(78.5, 81.5)]                  // el jardín, a la dcha. del camino
+      : [Math.random() < 0.5 ? azar(3, 18) : azar(46, 92), azar(88, 92)];  // delante de la valla
+  }
+  function volarA(m, p, segundos) {
+    m.style.setProperty("--vuelo", segundos + "s");
+    m.style.left = p[0] + "%";
+    m.style.top = p[1] + "%";
+  }
   escena.querySelectorAll(".mariposa").forEach(function (m) {
-    m.addEventListener("animationend", function (e) {
-      if (e.animationName !== "huir") return;
-      m.classList.add("oculta");
-      m.classList.remove("huye");
-      setTimeout(function () { m.classList.remove("oculta"); }, azar(4000, 7000));
-    });
-    alPasar(m, function () { m.classList.remove("posada"); m.classList.add("huye"); }, 8000);
-  });
-
-  // No siempre vuelan: cada una alterna un rato en el aire con otro posada,
-  // abriendo y cerrando las alas despacio. Posada, se queda donde está
-  // (se pausa su recorrido, no se reinicia).
-  escena.querySelectorAll(".mariposa").forEach(function (m) {
-    (function turno() {
-      var posarse = !m.classList.contains("posada");
-      if (!m.classList.contains("huye")) m.classList.toggle("posada", posarse);
-      setTimeout(turno, posarse ? azar(7000, 15000) : azar(9000, 18000));
-    })();
+    var vuelta = 0;                     // para cancelar lo pendiente al asustarla
+    function luego(ms, fn) {
+      var esta = vuelta;
+      setTimeout(function () { if (esta === vuelta) fn(); }, ms);
+    }
+    function volar(saltos) {
+      m.classList.remove("posada");
+      if (saltos <= 0) return posarse();
+      var s = azar(3, 5);
+      volarA(m, puntoEnElAire(), s);
+      luego(s * 1000, function () { volar(saltos - 1); });
+    }
+    function posarse() {
+      var s = azar(4.5, 6.5);
+      volarA(m, puntoEnElSuelo(), s);
+      luego(s * 1000, function () {
+        m.classList.add("posada");
+        luego(azar(7000, 15000), function () { volar(Math.round(azar(2, 4))); });
+      });
+    }
+    alPasar(m, function () {
+      vuelta++;
+      m.classList.remove("posada");
+      var x = parseFloat(m.style.left) || 50;
+      volarA(m, [x + azar(-12, 12), -12], 2.6);
+      luego(2600, function () {
+        m.classList.add("oculta");
+        luego(azar(5000, 8000), function () {
+          m.style.transition = "none";
+          m.style.left = (Math.random() < 0.5 ? -4 : 102) + "%";
+          m.style.top = azar(58, 70) + "%";
+          void m.offsetWidth;
+          m.style.transition = "";
+          m.classList.remove("oculta");
+          volar(Math.round(azar(2, 3)));
+        });
+      });
+    }, 6000);
+    luego(azar(0, 3000), function () { volar(Math.round(azar(1, 3))); });
   });
 
   // hojas que caen del árbol
