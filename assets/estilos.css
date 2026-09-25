@@ -593,7 +593,8 @@ footer a:hover { color: var(--acento); }
   --nube: rgba(255, 255, 255, 0.85);
   --humo: rgba(240, 240, 240, 0.7);
   --niebla: 0;
-  --noche: 0;          /* 0 = pleno día, 1 = noche cerrada */
+  --noche: 0;
+  --madera-clara: color-mix(in srgb, var(--madera) 55%, #C9A06A);          /* 0 = pleno día, 1 = noche cerrada */
 
   position: relative;
   aspect-ratio: 5 / 4;
@@ -970,6 +971,83 @@ footer a:hover { color: var(--acento); }
   100% { transform: translate(var(--dx), var(--dy)) rotate(340deg); opacity: 0; }
 }
 
+/* --- el banco, junto a la entrada: un sitio tranquilo para sentarse
+   fuera, con su cojín, una taza que aún humea y una maceta al lado --- */
+.banco { left: 34%; width: 13%; bottom: 17.5%; height: 7%; }
+.banco > div { position: absolute; }
+.banco .respaldo {
+  left: 4%; right: 4%; top: 0; height: 42%;
+  background:
+    linear-gradient(var(--madera-clara), var(--madera-clara)) 0 0 / 100% 38% no-repeat,
+    linear-gradient(var(--madera-clara), var(--madera-clara)) 0 100% / 100% 38% no-repeat;
+}
+.banco .asiento {
+  left: 0; right: 0; top: 50%; height: 16%;
+  background: var(--madera-clara);
+  border-radius: 1px;
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--madera) 60%, transparent);
+}
+.banco .pata-banco { top: 50%; bottom: 0; width: 7%; background: var(--madera); }
+.banco .pata-banco.b1 { left: 8%; }
+.banco .pata-banco.b2 { right: 8%; }
+.banco .cojin {
+  left: 14%; width: 30%; top: 34%; height: 20%;
+  border-radius: 40% 40% 20% 20%;
+  background: #B5563F;
+  filter: brightness(calc(1 - var(--noche) * 0.55));
+}
+.banco .taza {
+  right: 18%; width: 7%; top: 36%; height: 16%;
+  border-radius: 0 0 30% 30%;
+  background: #EDE6D6;
+  filter: brightness(calc(1 - var(--noche) * 0.5));
+}
+/* el vapor de la taza: muy tenue y muy lento */
+.banco .taza::before {
+  content: "";
+  position: absolute;
+  left: 20%;
+  bottom: 100%;
+  width: 60%;
+  height: 220%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 80%, rgba(255, 255, 255, 0.55), transparent 70%);
+  transform-origin: 50% 100%;
+  animation: vapor 6s ease-in-out infinite;
+}
+.banco .taza::after {
+  content: "";
+  position: absolute;
+  left: 95%;
+  top: 22%;
+  width: 45%;
+  height: 45%;
+  border: 1.5px solid #EDE6D6;
+  border-left: 0;
+  border-radius: 0 50% 50% 0;
+}
+@keyframes vapor {
+  0%, 100% { opacity: 0.2; transform: translateY(0) scaleX(0.8); }
+  50% { opacity: 0.7; transform: translateY(-18%) scaleX(1.1); }
+}
+.maceta { left: 47.5%; width: 3.2%; bottom: 17.5%; height: 4%; }
+/* el tiesto, estrecho abajo; la mata sale por arriba */
+.maceta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #A55B3A;
+  clip-path: polygon(0 0, 100% 0, 84% 100%, 16% 100%);
+  filter: brightness(calc(1 - var(--noche) * 0.55));
+}
+.maceta .mata {
+  position: absolute;
+  left: -40%; right: -40%; bottom: 80%;
+  height: 170%;
+  border-radius: 50% 50% 40% 40%;
+  background: var(--copa-2);
+}
+
 /* --- valla y primer plano --- */
 /* la valla va en dos tramos, con la entrada de la parcela donde la cruza
    el camino, entre dos postes más gruesos */
@@ -1044,6 +1122,11 @@ footer a:hover { color: var(--acento); }
 .mariposa::before { left: 0; transform-origin: 100% 50%; }
 .mariposa::after { right: 0; transform-origin: 0 50%; border-radius: 10% 60% 30% 60%; }
 .escena:not([data-momento="dia"]) .mariposa { display: none; }
+/* posada: se queda donde está y mueve las alas despacio */
+.mariposa.posada { animation-play-state: paused; }
+.mariposa.posada::before,
+.mariposa.posada::after { animation: batir-lento 3s ease-in-out infinite alternate; }
+@keyframes batir-lento { to { transform: scaleX(0.55); } }
 @keyframes batir { to { transform: scaleX(0.25); } }
 @keyframes vagar {
   0% { transform: translate(0, 0); }

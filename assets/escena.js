@@ -271,9 +271,9 @@
       "--duracion": azar(7, 11) + "s"
     });
   }
-  ["#F2C94C", "#F4F1E8", "#E98A4E"].forEach(function (c, n) {
+  ["#F2C94C", "#F4F1E8"].forEach(function (c, n) {
     crear("mariposa", {
-      left: (azar(4, 14) + n * 26) + "%",
+      left: (azar(6, 16) + n * 40) + "%",
       top: azar(64, 78) + "%",
       "--color": c,
       "--retardo": azar(-16, 0) + "s"
@@ -284,6 +284,10 @@
   if (sombra) {
     sombra.innerHTML = '<svg viewBox="0 0 40 56" aria-hidden="true" fill="rgba(58,34,20,0.62)">' +
       '<ellipse cx="20" cy="13" rx="7.5" ry="8.5"/>' +
+      // los auriculares: la diadema sobre la cabeza y un casco a cada lado
+      '<path d="M10.8 14 C10.8 1.2 29.2 1.2 29.2 14" fill="none" stroke="rgba(40,22,12,0.85)" stroke-width="2"/>' +
+      '<rect x="8.6" y="10.5" width="4.6" height="8" rx="2" fill="rgba(40,22,12,0.88)"/>' +
+      '<rect x="26.8" y="10.5" width="4.6" height="8" rx="2" fill="rgba(40,22,12,0.88)"/>' +
       '<path d="M16.5 20 h7 v6 h-7 Z"/>' +
       '<path d="M3 56 C3 40 7 31 14 29 C17 28 23 28 26 29 C33 31 37 40 37 56 Z"/>' +
       '</svg>';
@@ -476,7 +480,18 @@
       m.classList.remove("huye");
       setTimeout(function () { m.classList.remove("oculta"); }, azar(4000, 7000));
     });
-    alPasar(m, function () { m.classList.add("huye"); }, 8000);
+    alPasar(m, function () { m.classList.remove("posada"); m.classList.add("huye"); }, 8000);
+  });
+
+  // No siempre vuelan: cada una alterna un rato en el aire con otro posada,
+  // abriendo y cerrando las alas despacio. Posada, se queda donde está
+  // (se pausa su recorrido, no se reinicia).
+  escena.querySelectorAll(".mariposa").forEach(function (m) {
+    (function turno() {
+      var posarse = !m.classList.contains("posada");
+      if (!m.classList.contains("huye")) m.classList.toggle("posada", posarse);
+      setTimeout(turno, posarse ? azar(7000, 15000) : azar(9000, 18000));
+    })();
   });
 
   // hojas que caen del árbol
@@ -589,29 +604,16 @@
   setTimeout(function () { if (activa()) pasear(); }, azar(8000, 15000));
   cadaTanto(50000, 90000, pasear);
 
-  // Lo que dice, una frase al azar sin repetir la anterior. La de GitHub
-  // lleva enlace: el clic en él no adelanta la hora de la escena.
-  var FRASES = [
-    "Tus movimientos no salen de esta casa. Yo tampoco.",
-    "Miau. Clasifico mejor que tu banco.",
-    "Ni servidor, ni cuenta, ni nube. Bueno, esas dos no cuentan.",
-    "Encuentro las suscripciones olvidadas. Y los ratones.",
-    "Suelta los extractos en entrada/ y yo me echo la siesta.",
-    "Si te gusto, deja una estrella en <a href=\"https://github.com/ulmoexp/eledger\" target=\"_blank\" rel=\"noopener\">GitHub</a>. Me pagan en estrellas.",
-    "Lo que entra por la valla, aquí se queda.",
-    "El recibo de la tarjeta, contado una sola vez. Palabra de gato."
-  ];
+  // Lo que dice. Lleva enlace: el clic en él no adelanta la hora.
+  var FRASE = "Si te gusto, deja una estrella en <a href=\"https://github.com/ulmoexp/eledger\" " +
+    "target=\"_blank\" rel=\"noopener\">GitHub</a>. Me pagan en estrellas.";
   var bocadillo = gato.querySelector(".bocadillo");
-  var ultima = -1;
+  bocadillo.innerHTML = FRASE;
   // un clic en el gato (o en su enlace) no adelanta la hora de la escena
   gato.addEventListener("click", function (e) { e.stopPropagation(); });
   gato.addEventListener("mouseenter", function () {
     charlando = true;
     detener();
-    var n;
-    do { n = Math.floor(Math.random() * FRASES.length); } while (n === ultima);
-    ultima = n;
-    bocadillo.innerHTML = FRASES[n];
     // que se abra hacia donde hay sitio, sin salirse del marco
     gato.classList.toggle("hacia-izq", dondeVa() > 45);
     gato.classList.add("habla");
