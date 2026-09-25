@@ -183,7 +183,9 @@
   <p>Los bancos llaman «.xls» a cosas muy distintas: Excel clásico, una tabla
     HTML, un XML, incluso un CSV renombrado. La herramienta mira el contenido
     real del fichero, no la extensión, así que no tienes que convertir ni
-    renombrar nada.</p>
+    renombrar nada. Entiende también las columnas en inglés de los neobancos
+    (<em>Amount</em>, <em>Payee</em>…) y el importe partido en dos columnas
+    (<em>Cargo</em> y <em>Abono</em>, o <em>Debe</em> y <em>Haber</em>).</p>
 </section>
 
 <section class="contenedor seccion-guia" id="cuenta-o-tarjeta">
@@ -263,17 +265,21 @@ BAR LA ESQUINA      ->  Ocio                     [=bar · base]</code></pre>
 </section>
 
 <section class="contenedor seccion-guia" id="cuentas-json">
-  <h2>cuentas.json · si tienes más de una cuenta</h2>
-  <p>Solo hace falta si tienes <strong>más de una cuenta del mismo tipo</strong>.
-    Sin esto, un movimiento idéntico el mismo día en dos cuentas se cuenta
-    una sola vez, como si fuera el mismo.</p>
+  <h2>cuentas.json · varias cuentas o tarjetas</h2>
+  <p>Solo hace falta si tienes <strong>más de una cuenta o tarjeta del mismo
+    tipo</strong> (dos cuentas corrientes, o una tarjeta cada uno). Sin esto,
+    un movimiento idéntico el mismo día en las dos se cuenta una sola vez: dos
+    cafés iguales, uno en cada tarjeta, serían uno. Si lo detecta, avisa.</p>
   <pre class="codigo"><code>{
   "principal": "principal",
   "ahorro": "ahorro"
 }</code></pre>
   <p class="pmini">La clave es un trozo del nombre del fichero. Vacío (como
     viene de fábrica), todos los ficheros cuentan como si fueran de la misma
-    cuenta.</p>
+    cuenta. Una vez declaradas, cada descarga tiene que llevar en el nombre lo
+    que identifica a su cuenta: un «movimientos (1).xls» que repite una cuenta
+    declarada no se lee, para no contarlo dos veces, y se avisa de que lo
+    renombres.</p>
 </section>
 
 <section class="contenedor seccion-guia" id="el-historico">
@@ -293,6 +299,12 @@ BAR LA ESQUINA      ->  Ocio                     [=bar · base]</code></pre>
           saldo de la cuenta. Debajo, tres gráficos: el Acumulado, los
           ingresos y gastos de cada mes, y el gasto medio al mes por
           categoría.</td>
+      </tr>
+      <tr>
+        <td><code>CUENTAS</code></td>
+        <td>Solo si tienes dos o más cuentas o tarjetas en
+          <code>cuentas.json</code>: lo que se gastó y lo que entró en cada
+          una, mes a mes, y el saldo de cada cuenta.</td>
       </tr>
       <tr>
         <td><code>MOVIMIENTOS</code></td>
@@ -350,6 +362,17 @@ BAR LA ESQUINA      ->  Ocio                     [=bar · base]</code></pre>
     <code>orden_resumen</code> (qué columnas salen y en qué orden) y
     <code>desglosar_ingresos</code> (una columna por cada categoría de
     ingreso, además del total).</p>
+  <p class="pmini"><strong>Para juntar dos categorías de fábrica</strong> en
+    una tuya (Luz/Agua y Fibra/movil en Facturas), declara la tuya y añade
+    <code>"equivalencias": {"Luz/Agua": "Facturas", "Fibra/movil":
+    "Facturas"}</code>: las reglas de fábrica siguen funcionando y van a la
+    tuya.</p>
+  <p class="pmini"><strong>Si vienes de otra app</strong>, su export se lee
+    como un extracto más. Para conservar sus categorías, añade
+    <code>"importar_categorias": {"fichero": "export", "traducir":
+    {"Supermercado": "Comida"}}</code>: <code>fichero</code> es un trozo del
+    nombre del export, y lo traducido va a <code>categoria_manual</code>. Las
+    que ya se llaman como las tuyas valen sin traducir.</p>
   <div class="aviso alerta">
     <h3>El fallo que esto evita</h3>
     <p>Si el texto de una categoría en <code>rules.json</code> no coincide
@@ -413,14 +436,45 @@ Acumulado         = Acumulado del mes anterior + Balance
   <pre class="codigo"><code>{
   "archivo": "contabilidad.xlsx",
   "hoja": "MOVIMIENTOS",
+  "modo": "tabla",
   "incluir_excluidos": false,
   "copias_de_seguridad": 10
 }</code></pre>
+  <div class="tabla-guia-scroll">
+  <table class="tabla-guia">
+    <thead><tr><th>modo</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>tabla</code></td>
+        <td>La hoja es de la herramienta: se reescribe entera en cada
+          ejecución. Para quien monta sus fórmulas en otra hoja.</td>
+      </tr>
+      <tr>
+        <td><code>añadir</code></td>
+        <td>La hoja es tuya, con tus cabeceras y lo que ya tengas: solo se
+          añaden debajo los movimientos que falten. Lo que ya hay no se toca
+          nunca. Para quien lleva años con su propio Excel.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="pmini">Con <code>"columnas"</code> eliges qué se escribe y con
+    qué cabecera: <code>{"Fecha": "fecha", "Concepto": "descripcion",
+    "Importe": "importe", "Categoría": "categoria"}</code>. En modo añadir,
+    pon tus cabeceras tal cual.</p>
+  <p class="pmini"><strong>La primera vez, sobre una copia</strong> de tu
+    fichero: cuando veas que sale lo que esperas, cambia al de verdad.</p>
+  <p class="pmini">Si pones solo el nombre, el fichero se busca en la carpeta
+    de la herramienta (la que tiene <code>entrada/</code> y
+    <code>ajustes/</code>), no dentro de <code>ajustes/</code>.</p>
   <div class="aviso alerta">
     <h3>Con red de seguridad</h3>
-    <p>Antes de escribir se guarda una copia con fecha, y se comprueba que la
-      hoja de destino no tenga tablas dinámicas, macros ni fórmulas: si las
-      tiene, se cancela la escritura y tu fichero se queda tal como estaba.</p>
+    <p>Antes de escribir se guarda una copia con fecha (si no hay nada nuevo,
+      ni se escribe ni se copia). Y no se escribe si la hoja de destino tiene
+      tablas dinámicas, macros o fórmulas, si su cabecera no es la que
+      espera (una tabla tuya en modo tabla, o distinta de «columnas» en modo
+      añadir), o si tienes el fichero abierto: tu fichero se
+      queda tal como estaba.</p>
   </div>
 </section>
 
@@ -458,6 +512,11 @@ Acumulado         = Acumulado del mes anterior + Balance
         <td><em>«La carpeta entrada/ está vacía»</em></td>
         <td>Comprueba que lo que has soltado no es un <code>.zip</code> ni un
           <code>.pdf</code>: solo se leen extractos.</td>
+      </tr>
+      <tr>
+        <td><em>«No he podido leer ningún extracto»</em></td>
+        <td>Hay ficheros, pero ninguno se ha podido leer. El motivo de cada
+          uno sale en los avisos, justo encima.</td>
       </tr>
       <tr>
         <td>Un extracto se ha tomado por el tipo que no era</td>
