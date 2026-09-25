@@ -103,7 +103,10 @@
 
   // --- sol y luna: cuándo salen, cuánto duran arriba y su arco (% del marco) ---
   var SOL = { sale: 6.6, dura: 13.8, izq: 3, ancho: 84, bajo: 62, alto: 52 };
-  var LUNA = { sale: 20.2, dura: 11, izq: 8, ancho: 82, bajo: 64, alto: 50 };
+  // La luna sale detrás de la casa y sube más: con el arco de antes, a las
+  // 23:15 (la parada «noche» del clic) aún iba a la altura del tejado y
+  // apenas se veía.
+  var LUNA = { sale: 19.5, dura: 12, izq: 20, ancho: 72, bajo: 58, alto: 50 };
 
   // --- cuándo hay luz en cada ventana (horas; pueden pasar de las 24) ---
   var LUCES = {
@@ -292,7 +295,7 @@
   var PELO = "#C9803F", RAYA = "#9C5A26", LEJOS = "#A8652F", CLARO = "#E4B27A";
   var gato = crear("gato", {});
   gato.innerHTML =
-    '<span class="miau">¡miau!</span>' +
+    '<span class="bocadillo"></span>' +
     '<svg viewBox="0 0 100 64" aria-hidden="true">' +
     '<g class="cola"><path d="M81 31 C92 29 98 18 94 7 C93 4 89 4 89 8 C92 17 88 25 79 26 Z" fill="' + PELO + '"/></g>' +
     '<g class="pelaje">' +
@@ -475,11 +478,6 @@
     });
     alPasar(m, function () { m.classList.add("huye"); }, 8000);
   });
-  alPasar(gato, function () {
-    gato.classList.add("salta", "maulla");
-    setTimeout(function () { gato.classList.remove("salta"); }, 500);
-    setTimeout(function () { gato.classList.remove("maulla"); }, 1400);
-  }, 1500);
 
   // hojas que caen del árbol
   cadaTanto(7000, 14000, function () { hoja(false); });
@@ -535,13 +533,43 @@
   // El gato cruza por fases: anda hasta la mitad, se sienta un rato
   // (parpadea, mueve la cola) y sigue. Con «transition» en left, y el JS
   // encadena los tramos, para que las patas solo se muevan cuando anda.
+  // Al pasarle el ratón se para donde esté y dice algo; al quitarlo,
+  // sigue a la misma velocidad desde ahí.
   var paseando = false;
-  function tramo(hasta, segundos, luego) {
+  var tramoEnCurso = null;              // {hasta, velocidad (%/s), luego, reloj}
+  var charlando = false;
+  var pendiente = null;                 // lo que tocaba hacer mientras charlaba
+
+  function dondeVa() { return gato.offsetLeft / escena.clientWidth * 100; }
+  function arrancar() {
+    var t = tramoEnCurso;
+    var segundos = Math.abs(t.hasta - dondeVa()) / t.velocidad;
     gato.classList.add("anda");
     gato.style.transition = "left " + segundos + "s linear";
-    gato.style.left = hasta + "%";
-    setTimeout(function () { gato.classList.remove("anda"); luego(); }, segundos * 1000);
+    gato.style.left = t.hasta + "%";
+    t.reloj = setTimeout(function () {
+      tramoEnCurso = null;
+      gato.classList.remove("anda");
+      t.luego();
+    }, segundos * 1000);
   }
+  function tramo(hasta, segundos, luego) {
+    tramoEnCurso = { hasta: hasta, velocidad: Math.abs(hasta - dondeVa()) / segundos, luego: luego };
+    arrancar();
+  }
+  function detener() {
+    if (!tramoEnCurso) return;
+    clearTimeout(tramoEnCurso.reloj);
+    var x = dondeVa();
+    gato.style.transition = "none";
+    gato.style.left = x + "%";
+    gato.classList.remove("anda");
+  }
+  // si toca algo mientras charla, espera a que se vaya el ratón
+  function cuandoPueda(fn) {
+    if (charlando) pendiente = fn; else fn();
+  }
+
   function pasear() {
     if (paseando) return;
     paseando = true;
@@ -551,11 +579,47 @@
     tramo(azar(40, 55), azar(9, 12), function () {
       gato.classList.add("sentado");
       setTimeout(function () {
-        gato.classList.remove("sentado");
-        tramo(-14, azar(9, 12), function () { paseando = false; });
+        cuandoPueda(function () {
+          gato.classList.remove("sentado");
+          tramo(-14, azar(9, 12), function () { paseando = false; });
+        });
       }, azar(4000, 7000));
     });
   }
   setTimeout(function () { if (activa()) pasear(); }, azar(8000, 15000));
   cadaTanto(50000, 90000, pasear);
+
+  // Lo que dice, una frase al azar sin repetir la anterior. La de GitHub
+  // lleva enlace: el clic en él no adelanta la hora de la escena.
+  var FRASES = [
+    "Tus movimientos no salen de esta casa. Yo tampoco.",
+    "Miau. Clasifico mejor que tu banco.",
+    "Ni servidor, ni cuenta, ni nube. Bueno, esas dos no cuentan.",
+    "Encuentro las suscripciones olvidadas. Y los ratones.",
+    "Suelta los extractos en entrada/ y yo me echo la siesta.",
+    "Si te gusto, deja una estrella en <a href=\"https://github.com/ulmoexp/eledger\" target=\"_blank\" rel=\"noopener\">GitHub</a>. Me pagan en estrellas.",
+    "Lo que entra por la valla, aquí se queda.",
+    "El recibo de la tarjeta, contado una sola vez. Palabra de gato."
+  ];
+  var bocadillo = gato.querySelector(".bocadillo");
+  var ultima = -1;
+  // un clic en el gato (o en su enlace) no adelanta la hora de la escena
+  gato.addEventListener("click", function (e) { e.stopPropagation(); });
+  gato.addEventListener("mouseenter", function () {
+    charlando = true;
+    detener();
+    var n;
+    do { n = Math.floor(Math.random() * FRASES.length); } while (n === ultima);
+    ultima = n;
+    bocadillo.innerHTML = FRASES[n];
+    // que se abra hacia donde hay sitio, sin salirse del marco
+    gato.classList.toggle("hacia-izq", dondeVa() > 45);
+    gato.classList.add("habla");
+  });
+  gato.addEventListener("mouseleave", function () {
+    charlando = false;
+    gato.classList.remove("habla");
+    if (pendiente) { var fn = pendiente; pendiente = null; fn(); }
+    else if (tramoEnCurso) arrancar();
+  });
 })();

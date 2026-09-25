@@ -1057,7 +1057,7 @@ footer a:hover { color: var(--acento); }
 /* --- el gato: un SVG que escena.js crea y pasea por fases (anda, se
    sienta a mitad, sigue). Mira a la izquierda, que es hacia donde va. Rojizo
    para que se vea sobre el verde; de noche se oscurece y le brillan los ojos.
-   Al pasarle el ratón, da un salto y maúlla. --- */
+   Al pasarle el ratón se para y dice algo (escena.js, FRASES). --- */
 .gato {
   position: absolute;
   bottom: 1.5%;
@@ -1081,28 +1081,46 @@ footer a:hover { color: var(--acento); }
 .gato .parpado { transform-box: fill-box; transform-origin: 50% 0; transform: scaleY(0); }
 .gato.sentado .parpado { animation: parpadeo-gato 3s ease-in-out infinite; }
 .gato.sentado .cola { animation-duration: 1.8s; }
-.gato.salta { animation: salto 0.7s ease-out; }
-.gato .miau {
+/* lo que dice al pasarle el ratón */
+.gato .bocadillo {
   position: absolute;
-  left: -10%;
-  bottom: 105%;
-  padding: 1px 6px;
-  font-size: clamp(9px, 1.4vw, 12px);
-  white-space: nowrap;
+  left: 10%;
+  bottom: 108%;
+  width: max-content;
+  max-width: 420%;
+  padding: 5px 8px;
+  font-size: clamp(8.5px, 1vw, 11px);
+  line-height: 1.35;
   color: var(--tinta, #1B2027);
   background: #FFFDF6;
   border: 1.5px solid var(--tinta, #1B2027);
+  box-shadow: 3px 3px 0 rgba(27, 32, 39, 0.18);
   opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
   pointer-events: none;
 }
-.gato.maulla .miau { opacity: 1; transform: none; }
+/* el piquito, hacia el gato */
+.gato .bocadillo::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 100%;
+  width: 8px;
+  height: 8px;
+  background: #FFFDF6;
+  border-right: 1.5px solid var(--tinta, #1B2027);
+  border-bottom: 1.5px solid var(--tinta, #1B2027);
+  transform: translateY(-4px) rotate(45deg);
+}
+.gato.hacia-izq .bocadillo { left: auto; right: 10%; }
+.gato.hacia-izq .bocadillo::after { left: auto; right: 14px; }
+.gato.habla .bocadillo { opacity: 1; transform: none; pointer-events: auto; }
+.gato .bocadillo a { color: var(--acento, #0E6B5E); }
 @keyframes paso { from { transform: rotate(22deg); } to { transform: rotate(-22deg); } }
 @keyframes vaiven { to { transform: translateY(1.5px); } }
 @keyframes cola { from { transform: rotate(-6deg); } to { transform: rotate(14deg); } }
 @keyframes parpadeo-gato { 0%, 92%, 100% { transform: scaleY(0); } 95% { transform: scaleY(1); } }
-@keyframes salto { 40% { translate: 0 -22%; } }
 
 /* --- lo que pasa al pasar el ratón --- */
 /* la puerta se entreabre y dentro hay luz */
