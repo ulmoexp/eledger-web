@@ -243,7 +243,8 @@
       top: azar(0, 100) + "%",
       // cada una sale con un grado de oscuridad distinto: van apareciendo
       "--umbral": azar(0.25, 0.8).toFixed(2),
-      "animation-delay": azar(-3, 0) + "s",
+      "--duracion": azar(2, 5) + "s",
+      "--retardo": azar(-5, 0) + "s",
       transform: "scale(" + azar(0.6, 1.4) + ")"
     }, cielo);
   }
@@ -253,22 +254,22 @@
     crear("brizna", {
       left: (x < 22 ? x : x + 20) + "%",
       height: azar(10, 22) + "px",
-      transform: "rotate(" + azar(-12, 12) + "deg)",
-      "animation-delay": azar(-4, 0) + "s"
+      "--duracion": azar(2.4, 3.6) + "s",
+      "--retardo": azar(-4, 0) + "s"
     });
   }
   for (i = 0; i < 9; i++) {
     crear("luciernaga", {
       left: azar(5, 95) + "%",
       top: azar(66, 90) + "%",
-      "animation-delay": azar(-6, 0) + "s",
-      "animation-duration": azar(4, 8) + "s"
+      "--retardo": azar(-6, 0) + "s",
+      "--duracion": azar(4, 8) + "s"
     });
   }
-  ["#F2C94C", "#F4F1E8"].forEach(function (c, n) {
+  ["#F2C94C", "#F4F1E8", "#E98A4E"].forEach(function (c, n) {
     crear("mariposa", {
-      left: (azar(50, 60) - n * 38) + "%",
-      top: azar(66, 76) + "%",
+      left: (azar(4, 14) + n * 26) + "%",
+      top: azar(64, 78) + "%",
       "--color": c,
       "animation-delay": azar(-16, 0) + "s"
     });
@@ -281,10 +282,8 @@
     crear(c, {}, gato);
   });
 
-  if (quieto) return;
-
   // ------------------------------------------------------------ lo que va y viene
-  // Nada se mueve si la escena no se ve o la pestaña está en segundo plano.
+  // Nada se lanza si la escena no se ve o la pestaña está en segundo plano.
   var visible = true;
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(function (entradas) {
@@ -314,17 +313,49 @@
     }));
   }, 800);
 
+  // Con «reducir movimiento» se queda aquí: el ambiente (humo, nubes,
+  // vaivén, parpadeos) sigue; lo que cruza la escena, no.
+  if (quieto) return;
+
   // hojas que caen del árbol
-  cadaTanto(2500, 6000, function () {
+  function hoja(viento) {
     var arriba = azar(32, 48);
     quitarAlAcabar(crear(Math.random() < 0.3 ? "hoja ocre" : "hoja", {
       left: azar(64, 82) + "%",
       top: arriba + "%",
-      "--dx": azar(-40, 30) + "px",
+      "--dx": (viento ? azar(-120, -50) : azar(-40, 30)) + "px",
       "--dy": ((azar(78, 88) - arriba) / 100 * escena.clientHeight) + "px",
-      "animation-duration": azar(5, 7.5) + "s"
+      "animation-duration": azar(4.5, 7) + "s"
     }));
+  }
+  cadaTanto(1500, 3500, function () { hoja(false); });
+
+  // rachas de viento: el árbol y la hierba se agitan y vuelan unas hojas
+  cadaTanto(9000, 18000, function () {
+    escena.classList.add("racha");
+    for (var n = Math.round(azar(3, 5)); n > 0; n--) setTimeout(hoja, azar(0, 1200), true);
+    setTimeout(function () { escena.classList.remove("racha"); }, 2700);
   });
+
+  // bandadas de pájaros, de día: cada una cruza una vez, a su altura y en
+  // su sentido
+  function bandada() {
+    if (nocheAhora > 0.5) return;
+    var grupo = crear("pajaros" + (Math.random() < 0.5 ? " al-reves" : ""), {
+      top: azar(8, 32) + "%",
+      "animation-duration": azar(11, 19) + "s"
+    });
+    for (var n = Math.round(azar(2, 4)); n > 0; n--) {
+      crear("pajaro", {
+        left: azar(0, 70) + "%",
+        top: azar(0, 60) + "%",
+        "animation-delay": azar(-0.9, 0) + "s"
+      }, grupo);
+    }
+    quitarAlAcabar(grupo);
+  }
+  setTimeout(function () { if (activa()) bandada(); }, 1200);
+  cadaTanto(6000, 14000, bandada);
 
   // estrellas fugaces, solo con la noche cerrada
   cadaTanto(5000, 14000, function () {
@@ -354,8 +385,8 @@
     if (e.target === gato) gato.classList.remove("paseo");
   });
   function pasear() { gato.classList.add("paseo"); }
-  setTimeout(function () { if (activa()) pasear(); }, azar(6000, 12000));
-  cadaTanto(35000, 60000, function () {
+  setTimeout(function () { if (activa()) pasear(); }, azar(2500, 5000));
+  cadaTanto(18000, 35000, function () {
     if (!gato.classList.contains("paseo")) pasear();
   });
 })();

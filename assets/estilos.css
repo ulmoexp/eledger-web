@@ -623,6 +623,13 @@ footer a:hover { color: var(--acento); }
   background: var(--astro);
   box-shadow: 0 0 0 10px color-mix(in srgb, var(--astro) 22%, transparent),
               0 0 60px color-mix(in srgb, var(--astro) 60%, transparent);
+  animation: respirar 5s ease-in-out infinite;
+}
+@keyframes respirar {
+  50% {
+    box-shadow: 0 0 0 16px color-mix(in srgb, var(--astro) 14%, transparent),
+                0 0 90px color-mix(in srgb, var(--astro) 70%, transparent);
+  }
 }
 /* La luna es una media luna RECORTADA (mask), no un disco con un círculo
    del color del cielo encima: con el mordisco pintado, el halo de luna llena
@@ -635,6 +642,11 @@ footer a:hover { color: var(--acento); }
           mask: radial-gradient(ellipse 38% 50% at 68% 44%, transparent 98%, #000 100%);
   filter: drop-shadow(0 0 6px rgba(239, 232, 210, 0.55))
           drop-shadow(0 0 22px rgba(239, 232, 210, 0.45));
+  animation: brillo-luna 6s ease-in-out infinite;
+}
+@keyframes brillo-luna {
+  50% { filter: drop-shadow(0 0 9px rgba(239, 232, 210, 0.7))
+                drop-shadow(0 0 34px rgba(239, 232, 210, 0.55)); }
 }
 
 /* --- estrellas: cada una tiene su umbral y sale cuando la noche lo pasa,
@@ -648,7 +660,7 @@ footer a:hover { color: var(--acento); }
   border-radius: 50%;
   background: #F4EFDD;
   opacity: clamp(0, calc((var(--noche) - var(--umbral, 0.5)) * 5), 1);
-  animation: titilar 3s ease-in-out infinite;
+  animation: titilar var(--duracion, 3s) ease-in-out var(--retardo, 0s) infinite;
 }
 @keyframes titilar { 50% { filter: brightness(0.35); } }
 
@@ -673,7 +685,8 @@ footer a:hover { color: var(--acento); }
   height: 5%;
   border-radius: 999px;
   background: var(--nube);
-  animation: deriva 70s linear infinite;
+  animation: deriva 42s linear infinite;
+  animation-delay: -12s;
 }
 .nube::before,
 .nube::after {
@@ -684,17 +697,22 @@ footer a:hover { color: var(--acento); }
 }
 .nube::before { width: 42%; aspect-ratio: 1; left: 16%; bottom: 30%; }
 .nube::after { width: 30%; aspect-ratio: 1; left: 48%; bottom: 20%; }
-.nube.n2 { top: 27%; width: 18%; height: 3.6%; animation-duration: 95s; animation-delay: -50s; opacity: 0.8; }
+.nube.n2 { top: 27%; width: 18%; height: 3.6%; animation-duration: 58s; animation-delay: -40s; opacity: 0.8; }
+.nube.n3 { top: 8%; width: 20%; height: 4%; animation-duration: 75s; animation-delay: -20s; opacity: 0.65; }
 @keyframes deriva {
   from { transform: translateX(-120%); left: 0; }
   to { transform: translateX(0); left: 100%; }
 }
 
 .pajaros {
-  top: 22%; left: 12%; width: 20%; height: 8%;
+  position: absolute;
+  top: 22%; left: 0; width: 20%; height: 8%;
   opacity: clamp(0, calc(1 - var(--noche) * 2), 1);
-  animation: volar 40s linear infinite;
+  pointer-events: none;
+  animation: volar 16s linear forwards;
 }
+.pajaros.al-reves { animation-name: volar-al-reves; }
+.pajaros.al-reves .pajaro { transform: scaleX(-1); }
 .pajaro {
   position: absolute;
   width: 12px;
@@ -715,8 +733,12 @@ footer a:hover { color: var(--acento); }
 }
 @keyframes aletear { 50% { transform: scaleY(0.4) translateY(2px); } }
 @keyframes volar {
-  from { transform: translate(-60%, 10%); }
-  to { transform: translate(480%, -40%); }
+  from { transform: translate(-110%, 10%); }
+  to { transform: translate(560%, -60%); }
+}
+@keyframes volar-al-reves {
+  from { transform: translate(560%, -30%); }
+  to { transform: translate(-110%, 20%); }
 }
 
 .monte {
@@ -808,7 +830,8 @@ footer a:hover { color: var(--acento); }
 }
 .ventana,
 .buhardilla { transition: box-shadow 1.2s ease; }
-.encendida::before { opacity: 1; }
+.encendida::before { opacity: 1; animation: calidez 4.5s ease-in-out infinite; }
+@keyframes calidez { 30% { opacity: 0.86; } 55% { opacity: 1; } 70% { opacity: 0.93; } }
 .encendida { box-shadow: 0 0 18px 4px rgba(244, 198, 106, 0.45); }
 /* el marco en cruz y un reflejo del cristal, por encima de lo que haya
    dentro de la ventana */
@@ -921,17 +944,25 @@ footer a:hover { color: var(--acento); }
 }
 
 /* --- árbol --- */
-.arbol { left: 62%; width: 22%; bottom: 24%; height: 50%; transform-origin: 50% 100%; animation: mecer 7s ease-in-out infinite; }
+.arbol { left: 62%; width: 22%; bottom: 24%; height: 50%; transform-origin: 50% 100%; animation: mecer 5s ease-in-out infinite; }
+/* la racha va en «rotate», aparte del «transform» del vaivén: se suman */
+.escena.racha .arbol,
+.escena.racha .brizna { animation: mecer var(--duracion, 3s) ease-in-out var(--retardo, 0s) infinite, racha 2.6s ease-in-out; }
+@keyframes racha {
+  25% { rotate: -3.5deg; }
+  50% { rotate: 1.5deg; }
+  75% { rotate: -2deg; }
+}
 .arbol > div { position: absolute; border-radius: 50%; background: var(--copa); }
 .arbol .tronco { left: 46%; width: 9%; bottom: 0; height: 36%; border-radius: 2px; background: var(--madera); }
 .arbol .c1 { left: 0; width: 62%; bottom: 26%; aspect-ratio: 1; }
 .arbol .c2 { left: 38%; width: 62%; bottom: 24%; aspect-ratio: 1; background: var(--copa-2); }
 .arbol .c3 { left: 16%; width: 66%; bottom: 44%; aspect-ratio: 1; }
-@keyframes mecer { 50% { transform: rotate(1.4deg); } }
+@keyframes mecer { 0%, 100% { transform: rotate(-1deg); } 50% { transform: rotate(1.6deg); } }
 
 .hoja {
   position: absolute;
-  width: 1.3%;
+  width: 1.9%;
   aspect-ratio: 1;
   border-radius: 0 70% 0 70%;
   background: var(--copa-2);
@@ -980,7 +1011,7 @@ footer a:hover { color: var(--acento); }
   width: 2px;
   background: var(--prado-2);
   transform-origin: 50% 100%;
-  animation: mecer 4s ease-in-out infinite;
+  animation: mecer var(--duracion, 3s) ease-in-out var(--retardo, 0s) infinite;
 }
 
 .luciernaga {
@@ -991,7 +1022,7 @@ footer a:hover { color: var(--acento); }
   background: #F6E27A;
   box-shadow: 0 0 6px 2px rgba(246, 226, 122, 0.7);
   opacity: 0;
-  animation: revolotear 6s ease-in-out infinite;
+  animation: revolotear var(--duracion, 6s) ease-in-out var(--retardo, 0s) infinite;
 }
 .escena:not([data-momento="noche"]):not([data-momento="tarde"]) .luciernaga { display: none; }
 @keyframes revolotear {
@@ -1004,10 +1035,10 @@ footer a:hover { color: var(--acento); }
 /* --- mariposas, de día --- */
 .mariposa {
   position: absolute;
-  width: 1.8%;
+  width: 2.4%;
   aspect-ratio: 1;
   pointer-events: none;
-  animation: vagar 16s ease-in-out infinite alternate;
+  animation: vagar 11s ease-in-out infinite alternate;
 }
 .mariposa::before,
 .mariposa::after {
@@ -1026,10 +1057,11 @@ footer a:hover { color: var(--acento); }
 @keyframes batir { to { transform: scaleX(0.25); } }
 @keyframes vagar {
   0% { transform: translate(0, 0); }
-  20% { transform: translate(40px, -18px); }
-  45% { transform: translate(90px, 6px); }
-  70% { transform: translate(50px, -26px); }
-  100% { transform: translate(120px, -8px); }
+  15% { transform: translate(45px, -28px); }
+  35% { transform: translate(95px, 4px); }
+  55% { transform: translate(60px, -40px); }
+  75% { transform: translate(130px, -14px); }
+  100% { transform: translate(150px, -36px); }
 }
 
 /* --- el gato: cruza el prado de vez en cuando, se sienta a mitad y sigue.
@@ -1042,7 +1074,7 @@ footer a:hover { color: var(--acento); }
   aspect-ratio: 2 / 1.1;
   pointer-events: none;
 }
-.gato.paseo { animation: paseo 20s linear forwards; }
+.gato.paseo { animation: paseo 15s linear forwards; }
 .gato > span { position: absolute; background: #2B2522; }
 .gato .cuerpo { left: 22%; right: 12%; bottom: 22%; height: 42%; border-radius: 50%; }
 .gato .pata { bottom: 0; width: 7%; height: 32%; border-radius: 2px; transform-origin: 50% 0; }
@@ -1099,6 +1131,22 @@ footer a:hover { color: var(--acento); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .cursor { opacity: 1; }
+  /* En la escena se queda lo que es ambiente, lento y en su sitio (nubes,
+     vaivén, humo, parpadeos): con todo apagado parecía una foto. Lo que
+     cruza la escena (gato, hojas, pájaros, fugaces, cámara rápida) no lo
+     lanza escena.js con esta preferencia. */
+  .escena .nube { animation: deriva 42s linear infinite !important; animation-delay: -12s !important; }
+  .escena .nube.n2 { animation-duration: 58s !important; animation-delay: -40s !important; }
+  .escena .nube.n3 { animation-duration: 75s !important; animation-delay: -20s !important; }
+  .escena .arbol { animation: mecer 5s ease-in-out infinite !important; }
+  .escena .brizna { animation: mecer var(--duracion, 3s) ease-in-out var(--retardo, 0s) infinite !important; }
+  .escena .estrella { animation: titilar var(--duracion, 3s) ease-in-out var(--retardo, 0s) infinite !important; }
+  .escena .luciernaga { animation: revolotear var(--duracion, 6s) ease-in-out var(--retardo, 0s) infinite !important; }
+  .escena .humo { animation: humear 5s ease-out forwards !important; }
+  .escena .astro { animation: respirar 5s ease-in-out infinite !important; }
+  .escena .luna { animation: brillo-luna 6s ease-in-out infinite !important; }
+  .escena .encendida::before { animation: calidez 4.5s ease-in-out infinite !important; }
+  .escena .niebla { animation: niebla 18s ease-in-out infinite alternate !important; }
 }
 
 /* --- móvil --- */
