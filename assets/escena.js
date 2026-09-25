@@ -12,6 +12,8 @@
 
   var escena = document.getElementById("escena");
   if (!escena) return;
+  // «reducir movimiento» solo apaga la cámara rápida del clic (salta sin
+  // animarla); el resto de la escena se mueve igual, a petición del usuario
   var quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // ------------------------------------------------------------ colores
@@ -271,7 +273,7 @@
       left: (azar(4, 14) + n * 26) + "%",
       top: azar(64, 78) + "%",
       "--color": c,
-      "animation-delay": azar(-16, 0) + "s"
+      "--retardo": azar(-16, 0) + "s"
     });
   });
   var sombra = ventanas.v1 ? crear("sombra", {}, ventanas.v1) : null;
@@ -383,9 +385,21 @@
   }
 
   alPasar(chimenea, function () { varias(5, 140, function () { bocanada(true); }); });
-  alPasar(escena.querySelector(".arbol"), function () {
-    varias(Math.round(azar(4, 7)), 120, function () { hoja(false); });
+  // lo que es de un solo disparo se quita al acabar, y así acaba siempre
+  // en reposo aunque el ratón se vaya a medias
+  function unDisparo(el, clase) {
+    el.classList.remove(clase);
+    void el.offsetWidth;
+    el.classList.add(clase);
+  }
+  var arbol = escena.querySelector(".arbol");
+  arbol.addEventListener("animationend", function (e) {
+    if (e.animationName === "sacudida") arbol.classList.remove("sacude");
   });
+  alPasar(arbol, function () {
+    unDisparo(arbol, "sacude");
+    varias(Math.round(azar(4, 7)), 120, function () { hoja(false); });
+  }, 1400);
   escena.querySelectorAll(".nube").forEach(function (nube) {
     alPasar(nube, function () {
       varias(14, 70, function () {
@@ -399,7 +413,11 @@
       });
     }, 1600);
   });
+  luna.addEventListener("animationend", function (e) {
+    if (e.animationName === "brillo-fuerte") luna.classList.remove("brilla");
+  });
   alPasar(luna, function () {
+    unDisparo(luna, "brilla");
     varias(5, 160, function () {
       var l = dondeEsta(luna);
       quitarAlAcabar(crear("destello", {
@@ -414,22 +432,46 @@
     void sombra.offsetWidth;              // para que la animación vuelva a empezar
     sombra.classList.add("pasa");
   }
-  alPasar(ventanas.v1, pasaAlguien, 3600);
+  alPasar(ventanas.v1, pasaAlguien, 4800);
+
+  // la caja fuerte: alguien prueba la combinación, falla, y la caja vibra
+  // con el piloto en rojo
+  var caja = escena.querySelector(".caja-fuerte");
+  var piloto = escena.querySelector(".piloto");
+  if (rueda && caja) {
+    rueda.addEventListener("animationend", function (e) {
+      if (e.animationName === "intento") rueda.classList.remove("intenta");
+      if (e.animationName === "combinacion") rueda.classList.remove("girando");
+    });
+    caja.addEventListener("animationend", function (e) {
+      if (e.animationName === "vibrar") caja.classList.remove("falla");
+    });
+    alPasar(ventanas.v2, function () {
+      rueda.classList.remove("girando");
+      unDisparo(rueda, "intenta");
+      setTimeout(function () {
+        unDisparo(caja, "falla");
+        if (piloto) piloto.classList.add("rojo");
+      }, 1350);
+      setTimeout(function () { if (piloto) piloto.classList.remove("rojo"); }, 2300);
+    }, 2400);
+  }
+
+  // una mariposa asustada sale volando y, al rato, vuelve con un fundido
   escena.querySelectorAll(".mariposa").forEach(function (m) {
-    alPasar(m, function () {
-      m.classList.add("huye");
-      setTimeout(function () { m.classList.remove("huye"); }, azar(6000, 10000));
-    }, 6000);
+    m.addEventListener("animationend", function (e) {
+      if (e.animationName !== "huir") return;
+      m.classList.add("oculta");
+      m.classList.remove("huye");
+      setTimeout(function () { m.classList.remove("oculta"); }, azar(4000, 7000));
+    });
+    alPasar(m, function () { m.classList.add("huye"); }, 8000);
   });
   alPasar(gato, function () {
     gato.classList.add("salta", "maulla");
     setTimeout(function () { gato.classList.remove("salta"); }, 500);
     setTimeout(function () { gato.classList.remove("maulla"); }, 1400);
   }, 1500);
-
-  // Con «reducir movimiento» se queda aquí: el ambiente (humo, nubes,
-  // vaivén, parpadeos) sigue; lo que cruza la escena, no.
-  if (quieto) return;
 
   // hojas que caen del árbol
   cadaTanto(1500, 3500, function () { hoja(false); });
@@ -477,8 +519,9 @@
 
   // la rueda de la caja fuerte, de vez en cuando (y al pasar el ratón, en CSS)
   if (rueda) {
-    rueda.addEventListener("animationend", function () { rueda.classList.remove("girando"); });
-    cadaTanto(12000, 26000, function () { rueda.classList.add("girando"); });
+    cadaTanto(12000, 26000, function () {
+      if (!rueda.classList.contains("intenta")) rueda.classList.add("girando");
+    });
   }
 
   // El gato cruza por fases: anda hasta la mitad, se sienta un rato

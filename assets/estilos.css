@@ -858,9 +858,9 @@ footer a:hover { color: var(--acento); }
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 34%;
-  height: 58%;
-  background: rgba(70, 42, 26, 0.5);
+  width: 42%;
+  height: 66%;
+  background: rgba(60, 34, 20, 0.72);
   border-radius: 45% 45% 0 0 / 30% 30% 0 0;
   transform: translateX(-130%);
 }
@@ -874,7 +874,7 @@ footer a:hover { color: var(--acento); }
   border-radius: 50%;
   background: inherit;
 }
-.sombra.pasa { animation: pasar 3.4s ease-in-out forwards; }
+.sombra.pasa { animation: pasar 4.6s ease-in-out forwards; }
 @keyframes pasar {
   from { transform: translateX(-130%); }
   45%, 55% { transform: translateX(95%); }
@@ -1036,7 +1036,7 @@ footer a:hover { color: var(--acento); }
   position: absolute;
   width: 2.4%;
   aspect-ratio: 1;
-  animation: vagar 11s ease-in-out infinite alternate;
+  animation: vagar 11s ease-in-out var(--retardo, 0s) infinite alternate;
 }
 .mariposa::before,
 .mariposa::after {
@@ -1129,9 +1129,37 @@ footer a:hover { color: var(--acento); }
 .buhardilla:hover::before { opacity: 1; }
 
 /* la caja fuerte: gira la rueda y se mueve la manivela */
-.ventana.v2:hover .rueda { animation: combinacion 2.6s ease-in-out; }
-.ventana.v2:hover .caja-fuerte::after { animation: manivela 2.6s ease-in-out; }
-@keyframes manivela { 80% { transform: rotate(0); } 90% { transform: rotate(-25deg); } }
+/* un intento de abrir la caja que falla: la rueda busca la combinación, la
+   manivela no cede, la caja vibra y se enciende un piloto rojo. Es de un
+   solo disparo (lo lanza escena.js) y acaba en reposo aunque se quite el
+   ratón a medias: con :hover, al salir, la rueda volvía de golpe. */
+.rueda.intenta { animation: intento 1.9s cubic-bezier(0.45, 0, 0.3, 1) forwards; }
+@keyframes intento {
+  0% { transform: rotate(0); }
+  28% { transform: rotate(230deg); }
+  52% { transform: rotate(-70deg); }
+  72%, 80% { transform: rotate(130deg); }
+  100% { transform: rotate(0); }
+}
+.caja-fuerte.falla { animation: vibrar 0.5s linear; }
+.caja-fuerte.falla::after { animation: manivela 0.5s ease-in-out; }
+@keyframes vibrar {
+  15%, 55% { translate: -1.5px 0; }
+  35%, 75% { translate: 1.5px 0; }
+  95% { translate: 0 0; }
+}
+@keyframes manivela { 30% { transform: rotate(-22deg); } 60% { transform: rotate(-8deg); } }
+.piloto {
+  position: absolute;
+  right: 12%;
+  top: 10%;
+  width: 11%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #5A2A2A;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.piloto.rojo { background: #FF4A3D; box-shadow: 0 0 4px 1px rgba(255, 74, 61, 0.9); }
 
 /* el sol echa rayos; la luna brilla más */
 .astro::before {
@@ -1148,11 +1176,17 @@ footer a:hover { color: var(--acento); }
   animation: girar 14s linear infinite;
 }
 .astro:hover::before { opacity: 1; }
-.luna:hover { animation: brillo-luna 1.2s ease-in-out infinite; }
+.luna.brilla { animation: brillo-fuerte 1.8s ease-in-out; }
+@keyframes brillo-fuerte {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(239, 232, 210, 0.55))
+                     drop-shadow(0 0 22px rgba(239, 232, 210, 0.45)); }
+  45% { filter: drop-shadow(0 0 12px rgba(255, 248, 225, 0.9))
+                drop-shadow(0 0 46px rgba(255, 248, 225, 0.7)); }
+}
 @keyframes girar { to { transform: rotate(360deg); } }
 
 /* el árbol se sacude (en «rotate», aparte del vaivén) */
-.arbol:hover { animation: mecer 5s ease-in-out infinite, sacudida 0.8s ease-in-out; }
+.arbol.sacude { animation: mecer 5s ease-in-out infinite, sacudida 1s ease-in-out; }
 @keyframes sacudida {
   20% { rotate: -3deg; } 40% { rotate: 3deg; } 60% { rotate: -2deg; } 80% { rotate: 1deg; }
 }
@@ -1185,9 +1219,15 @@ footer a:hover { color: var(--acento); }
 }
 
 /* una mariposa asustada sale volando */
-.mariposa { cursor: pointer; pointer-events: auto; }
-.mariposa.huye { animation: huir 1.4s ease-in forwards; }
-@keyframes huir { to { transform: translate(60px, -160px) rotate(-20deg); opacity: 0; } }
+.mariposa { cursor: pointer; transition: opacity 1.2s ease; }
+.mariposa.oculta { opacity: 0; }
+/* huir va en «translate», aparte del «transform» de vagar: sale volando
+   desde donde esté, sin saltar antes a su sitio de partida */
+.mariposa.huye {
+  animation: vagar 11s ease-in-out var(--retardo, 0s) infinite alternate,
+             huir 1.4s ease-in forwards;
+}
+@keyframes huir { to { translate: 70px -170px; opacity: 0; } }
 
 .escena-marco figcaption {
   margin-top: 16px;
@@ -1198,24 +1238,15 @@ footer a:hover { color: var(--acento); }
 .escena-marco figcaption strong { color: var(--tinta); }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
+  /* La escena de la portada queda fuera, a petición del usuario
+     (25/09/2026): con todo apagado parecía una foto, y las piezas que se
+     quitan al acabar su animación (hojas, gotas) se quedaban quietas para
+     siempre. Solo la cámara rápida del clic respeta esta preferencia
+     (escena.js salta sin animarla). */
+  :not(.escena, .escena *),
+  :not(.escena, .escena *)::before,
+  :not(.escena, .escena *)::after { animation: none !important; transition: none !important; }
   .cursor { opacity: 1; }
-  /* En la escena se queda lo que es ambiente, lento y en su sitio (nubes,
-     vaivén, humo, parpadeos): con todo apagado parecía una foto. Lo que
-     cruza la escena (gato, hojas, pájaros, fugaces, cámara rápida) no lo
-     lanza escena.js con esta preferencia. */
-  .escena .nube { animation: deriva 42s linear infinite !important; animation-delay: -12s !important; }
-  .escena .nube.n2 { animation-duration: 58s !important; animation-delay: -40s !important; }
-  .escena .nube.n3 { animation-duration: 75s !important; animation-delay: -20s !important; }
-  .escena .arbol { animation: mecer 5s ease-in-out infinite !important; }
-  .escena .brizna { animation: mecer var(--duracion, 3s) ease-in-out var(--retardo, 0s) infinite !important; }
-  .escena .estrella { animation: titilar var(--duracion, 3s) ease-in-out var(--retardo, 0s) infinite !important; }
-  .escena .luciernaga { animation: revolotear var(--duracion, 6s) ease-in-out var(--retardo, 0s) infinite !important; }
-  .escena .humo { animation: humear 5s ease-out forwards !important; }
-  .escena .astro { animation: respirar 5s ease-in-out infinite !important; }
-  .escena .luna { animation: brillo-luna 6s ease-in-out infinite !important; }
-  .escena .encendida::before { animation: calidez 4.5s ease-in-out infinite !important; }
-  .escena .niebla { animation: niebla 18s ease-in-out infinite alternate !important; }
 }
 
 /* --- móvil --- */
