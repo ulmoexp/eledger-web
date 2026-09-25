@@ -921,8 +921,7 @@ footer a:hover { color: var(--acento); }
   height: 26%;
   background: #2A3037;
 }
-.rueda.girando,
-.escena:hover .rueda { animation: combinacion 2.6s ease-in-out; }
+.rueda.girando { animation: combinacion 2.6s ease-in-out; }
 @keyframes combinacion {
   35% { transform: rotate(250deg); }
   65% { transform: rotate(-70deg); }
@@ -1037,7 +1036,6 @@ footer a:hover { color: var(--acento); }
   position: absolute;
   width: 2.4%;
   aspect-ratio: 1;
-  pointer-events: none;
   animation: vagar 11s ease-in-out infinite alternate;
 }
 .mariposa::before,
@@ -1064,61 +1062,132 @@ footer a:hover { color: var(--acento); }
   100% { transform: translate(150px, -36px); }
 }
 
-/* --- el gato: cruza el prado de vez en cuando, se sienta a mitad y sigue.
-   Mira a la izquierda, que es hacia donde va. De noche le brillan los ojos. --- */
+/* --- el gato: un SVG que escena.js crea y pasea por fases (anda, se
+   sienta a mitad, sigue). Mira a la izquierda, que es hacia donde va. Rojizo
+   para que se vea sobre el verde; de noche se oscurece y le brillan los ojos.
+   Al pasarle el ratón, da un salto y maúlla. --- */
 .gato {
   position: absolute;
-  bottom: 2.5%;
+  bottom: 1.5%;
   left: 104%;
-  width: 7%;
-  aspect-ratio: 2 / 1.1;
+  width: 11%;
+  cursor: pointer;
+}
+.gato svg { display: block; width: 100%; height: auto; overflow: visible; }
+.gato .pelaje { filter: brightness(calc(1 - var(--noche) * 0.55)); }
+.gato .pata,
+.gato .cola { transform-box: fill-box; }
+.gato .pata { transform-origin: 50% 0; }
+.gato .cola { transform-origin: 0% 100%; animation: cola 2.2s ease-in-out infinite alternate; }
+.gato.anda .pata.p1,
+.gato.anda .pata.p4 { animation: paso 0.45s ease-in-out infinite alternate; }
+.gato.anda .pata.p2,
+.gato.anda .pata.p3 { animation: paso 0.45s ease-in-out -0.45s infinite alternate; }
+.gato.anda .cuerpo-gato { animation: vaiven 0.45s ease-in-out infinite alternate; }
+.gato .ojo { fill: #3A2A10; }
+.gato .brillo { fill: #F4E07A; opacity: var(--noche); }
+.gato .parpado { transform-box: fill-box; transform-origin: 50% 0; transform: scaleY(0); }
+.gato.sentado .parpado { animation: parpadeo-gato 3s ease-in-out infinite; }
+.gato.sentado .cola { animation-duration: 0.9s; }
+.gato.salta { animation: salto 0.5s ease-out; }
+.gato .miau {
+  position: absolute;
+  left: -10%;
+  bottom: 105%;
+  padding: 1px 6px;
+  font-size: clamp(9px, 1.4vw, 12px);
+  white-space: nowrap;
+  color: var(--tinta, #1B2027);
+  background: #FFFDF6;
+  border: 1.5px solid var(--tinta, #1B2027);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
   pointer-events: none;
 }
-.gato.paseo { animation: paseo 15s linear forwards; }
-.gato > span { position: absolute; background: #2B2522; }
-.gato .cuerpo { left: 22%; right: 12%; bottom: 22%; height: 42%; border-radius: 50%; }
-.gato .pata { bottom: 0; width: 7%; height: 32%; border-radius: 2px; transform-origin: 50% 0; }
-.gato .pata.a { left: 30%; }
-.gato .pata.b { left: 66%; }
-.gato.paseo .pata { animation: paso 0.5s ease-in-out infinite alternate; }
-.gato.paseo .pata.b { animation-delay: -0.25s; }
-.gato .cabeza { left: 4%; bottom: 44%; width: 30%; aspect-ratio: 1; border-radius: 50%; }
-.gato .cabeza::before,
-.gato .cabeza::after {
+.gato.maulla .miau { opacity: 1; transform: none; }
+@keyframes paso { from { transform: rotate(22deg); } to { transform: rotate(-22deg); } }
+@keyframes vaiven { to { transform: translateY(1.5px); } }
+@keyframes cola { from { transform: rotate(-6deg); } to { transform: rotate(14deg); } }
+@keyframes parpadeo-gato { 0%, 92%, 100% { transform: scaleY(0); } 95% { transform: scaleY(1); } }
+@keyframes salto { 40% { translate: 0 -40%; } }
+
+/* --- lo que pasa al pasar el ratón --- */
+/* la puerta se entreabre y dentro hay luz */
+.hueco {
+  left: 42%; width: 16%; bottom: 0; height: 32%;
+  border-radius: 40% 40% 0 0 / 22% 22% 0 0;
+  background: radial-gradient(circle at 50% 70%, #FBD98A, #E0A94E 75%);
+}
+.puerta { transform-origin: 0 50%; transition: transform 0.6s ease; }
+.puerta:hover,
+.hueco:hover + .puerta { transform: perspective(120px) rotateY(62deg); }
+
+/* la ventana del salón enciende la luz */
+.ventana.v1:hover::before { opacity: 1; }
+.ventana.v1:hover { box-shadow: 0 0 18px 4px rgba(244, 198, 106, 0.45); }
+.buhardilla:hover::before { opacity: 1; }
+
+/* la caja fuerte: gira la rueda y se mueve la manivela */
+.ventana.v2:hover .rueda { animation: combinacion 2.6s ease-in-out; }
+.ventana.v2:hover .caja-fuerte::after { animation: manivela 2.6s ease-in-out; }
+@keyframes manivela { 80% { transform: rotate(0); } 90% { transform: rotate(-25deg); } }
+
+/* el sol echa rayos; la luna brilla más */
+.astro::before {
   content: "";
   position: absolute;
-  top: -32%;
-  width: 40%;
-  height: 50%;
-  background: inherit;
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  inset: -45%;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg,
+    color-mix(in srgb, var(--astro) 55%, transparent) 0 6deg, transparent 6deg 30deg);
+  -webkit-mask: radial-gradient(circle, transparent 36%, #000 38%, transparent 70%);
+          mask: radial-gradient(circle, transparent 36%, #000 38%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  animation: girar 14s linear infinite;
 }
-.gato .cabeza::before { left: 2%; }
-.gato .cabeza::after { right: 2%; }
-.gato .ojos {
-  left: 10%; bottom: 62%; width: 18%; height: 8%;
-  background:
-    radial-gradient(circle, #F4E07A 45%, transparent 50%) 0 0 / 40% 100% no-repeat,
-    radial-gradient(circle, #F4E07A 45%, transparent 50%) 100% 0 / 40% 100% no-repeat;
-  opacity: var(--noche);
+.astro:hover::before { opacity: 1; }
+.luna:hover { animation: brillo-luna 1.2s ease-in-out infinite; }
+@keyframes girar { to { transform: rotate(360deg); } }
+
+/* el árbol se sacude (en «rotate», aparte del vaivén) */
+.arbol:hover { animation: mecer 5s ease-in-out infinite, sacudida 0.8s ease-in-out; }
+@keyframes sacudida {
+  20% { rotate: -3deg; } 40% { rotate: 3deg; } 60% { rotate: -2deg; } 80% { rotate: 1deg; }
 }
-.gato .cola {
-  right: 0; bottom: 48%; width: 18%; height: 70%;
-  background: none;
-  border-top: 2px solid #2B2522;
-  border-right: 2px solid #2B2522;
-  border-radius: 0 80% 0 0;
-  transform-origin: 0 100%;
-  animation: cola 2.4s ease-in-out infinite alternate;
+
+/* lluvia bajo una nube */
+.gota {
+  position: absolute;
+  width: 1.5px;
+  height: 2.2%;
+  background: linear-gradient(transparent, rgba(160, 190, 215, 0.9));
+  pointer-events: none;
+  animation: llover 0.9s linear forwards;
 }
-@keyframes paso { from { transform: rotate(18deg); } to { transform: rotate(-18deg); } }
-@keyframes cola { to { transform: rotate(-16deg); } }
-@keyframes paseo {
-  0% { left: 104%; }
-  40% { left: 50%; }
-  60% { left: 50%; }
-  100% { left: -12%; }
+@keyframes llover { to { transform: translateY(var(--caida, 200px)); opacity: 0.2; } }
+
+/* destellos junto a la luna */
+.destello {
+  position: absolute;
+  width: 1.4%;
+  aspect-ratio: 1;
+  background: #FFF7D6;
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  pointer-events: none;
+  animation: destellar 1.1s ease-out forwards;
 }
+@keyframes destellar {
+  0% { transform: scale(0) rotate(0); opacity: 1; }
+  60% { transform: scale(1.2) rotate(45deg); opacity: 1; }
+  100% { transform: scale(0.4) rotate(90deg); opacity: 0; }
+}
+
+/* una mariposa asustada sale volando */
+.mariposa { cursor: pointer; pointer-events: auto; }
+.mariposa.huye { animation: huir 1.4s ease-in forwards; }
+@keyframes huir { to { transform: translate(60px, -160px) rotate(-20deg); opacity: 0; } }
 
 .escena-marco figcaption {
   margin-top: 16px;

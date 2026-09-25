@@ -277,10 +277,36 @@
   var sombra = ventanas.v1 ? crear("sombra", {}, ventanas.v1) : null;
   var rueda = escena.querySelector(".rueda");
 
+  // El gato, de perfil y mirando a la izquierda. Las patas del lado de
+  // allá, más oscuras, van detrás del cuerpo; las de este lado, delante.
+  var PELO = "#C9803F", RAYA = "#9C5A26", LEJOS = "#A8652F", CLARO = "#E4B27A";
   var gato = crear("gato", {});
-  ["cuerpo", "pata a", "pata b", "cabeza", "ojos", "cola"].forEach(function (c) {
-    crear(c, {}, gato);
-  });
+  gato.innerHTML =
+    '<span class="miau">¡miau!</span>' +
+    '<svg viewBox="0 0 100 64" aria-hidden="true">' +
+    '<g class="cola"><path d="M81 31 C92 29 98 18 94 7 C93 4 89 4 89 8 C92 17 88 25 79 26 Z" fill="' + PELO + '"/></g>' +
+    '<g class="pelaje">' +
+      '<rect class="pata p2" x="44" y="36" width="5.5" height="23" rx="2.7" fill="' + LEJOS + '"/>' +
+      '<rect class="pata p4" x="76" y="34" width="5.5" height="25" rx="2.7" fill="' + LEJOS + '"/>' +
+      '<g class="cuerpo-gato">' +
+        '<path d="M32 32 C30 22 42 18 58 19 C72 19 84 21 85 30 C86 39 78 43 62 43 C48 43 34 42 32 32 Z" fill="' + PELO + '"/>' +
+        '<path d="M38 39 C48 44 66 44 77 40" stroke="' + CLARO + '" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+        '<path d="M53 20 C55 26 54 31 51 35 M62 19.5 C64 26 63 31 60 35 M71 20.5 C73 26 72 31 69 34" stroke="' + RAYA + '" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+        '<path d="M15 17 L13 3 L23 12 Z M24 11 L32 1.5 L34 15 Z" fill="' + PELO + '"/>' +
+        '<path d="M16 14 L15.5 7 L20 11.5 Z M26.5 11 L30.5 6 L31.5 13 Z" fill="#E8A59A"/>' +
+        '<circle cx="24" cy="23" r="11.5" fill="' + PELO + '"/>' +
+        '<path d="M22 12.5 L22.5 16.5 M26 12 L26 16 M30 13.5 L29 17" stroke="' + RAYA + '" stroke-width="1.6" stroke-linecap="round"/>' +
+        '<ellipse cx="15" cy="27" rx="5.5" ry="4.2" fill="' + CLARO + '"/>' +
+        '<path d="M10.5 24.3 L13.5 24 L12 26.2 Z" fill="#7A3B2E"/>' +
+      '</g>' +
+      '<rect class="pata p1" x="37" y="36" width="5.5" height="23" rx="2.7" fill="' + PELO + '"/>' +
+      '<rect class="pata p3" x="69" y="34" width="5.5" height="25" rx="2.7" fill="' + PELO + '"/>' +
+    '</g>' +
+    '<ellipse class="ojo" cx="19" cy="20.5" rx="2.1" ry="2.6"/>' +
+    '<ellipse class="brillo" cx="19" cy="20.5" rx="2.1" ry="2.6"/>' +
+    '<rect class="parpado" x="16.4" y="17.6" width="5.2" height="5.8" fill="' + PELO + '"/>' +
+    '<path d="M12 27 L1 24.5 M12 28 L1.5 29.5 M13 29 L3 33" stroke="#F4E7D0" stroke-width="0.7" stroke-linecap="round"/>' +
+    '</svg>';
 
   // ------------------------------------------------------------ lo que va y viene
   // Nada se lanza si la escena no se ve o la pestaña está en segundo plano.
@@ -300,22 +326,31 @@
     }, azar(min, max));
   }
 
+  // dónde está un elemento, en % del marco (lo que se mueve, como las nubes,
+  // hay que mirarlo en el momento)
+  function dondeEsta(el) {
+    var marco = escena.getBoundingClientRect();
+    var r = el.getBoundingClientRect();
+    return {
+      x: (r.left - marco.left) / marco.width * 100,
+      y: (r.top - marco.top) / marco.height * 100,
+      ancho: r.width / marco.width * 100,
+      alto: r.height / marco.height * 100
+    };
+  }
+
   // humo de la chimenea
   var chimenea = escena.querySelector(".chimenea");
-  setInterval(function () {
-    if (!activa()) return;
-    var marco = escena.getBoundingClientRect();
-    var c = chimenea.getBoundingClientRect();
+  function bocanada(fuerte) {
+    var c = dondeEsta(chimenea);
     quitarAlAcabar(crear("humo", {
-      left: ((c.left + c.width / 2 - marco.left) / marco.width * 100 - 2.5) + "%",
-      top: ((c.top - marco.top) / marco.height * 100 - 3) + "%",
-      "--dx": azar(15, 45) + "px"
+      left: (c.x + c.ancho / 2 - 2.5) + "%",
+      top: (c.y - 3) + "%",
+      "--dx": azar(15, 45) + "px",
+      width: fuerte ? azar(6, 8) + "%" : ""
     }));
-  }, 800);
-
-  // Con «reducir movimiento» se queda aquí: el ambiente (humo, nubes,
-  // vaivén, parpadeos) sigue; lo que cruza la escena, no.
-  if (quieto) return;
+  }
+  setInterval(function () { if (activa()) bocanada(false); }, 800);
 
   // hojas que caen del árbol
   function hoja(viento) {
@@ -328,6 +363,75 @@
       "animation-duration": azar(4.5, 7) + "s"
     }));
   }
+
+  function varias(n, cada, fn) {
+    for (var i = 0; i < n; i++) setTimeout(fn, i * cada);
+  }
+
+  // ------------------------------------------------------------ al pasar el ratón
+  // Van antes del corte de «reducir movimiento»: los provoca quien mira, no
+  // pasan solos. Cada cosa descansa un poco antes de poder repetirse.
+  function alPasar(el, fn, descanso) {
+    if (!el) return;
+    var libre = true;
+    el.addEventListener("mouseenter", function () {
+      if (!libre) return;
+      libre = false;
+      fn();
+      setTimeout(function () { libre = true; }, descanso || 1200);
+    });
+  }
+
+  alPasar(chimenea, function () { varias(5, 140, function () { bocanada(true); }); });
+  alPasar(escena.querySelector(".arbol"), function () {
+    varias(Math.round(azar(4, 7)), 120, function () { hoja(false); });
+  });
+  escena.querySelectorAll(".nube").forEach(function (nube) {
+    alPasar(nube, function () {
+      varias(14, 70, function () {
+        var n = dondeEsta(nube);
+        quitarAlAcabar(crear("gota", {
+          left: (n.x + azar(0.15, 0.85) * n.ancho) + "%",
+          top: (n.y + n.alto) + "%",
+          "--caida": ((62 - n.y) / 100 * escena.clientHeight) + "px",
+          "animation-duration": azar(0.6, 1) + "s"
+        }));
+      });
+    }, 1600);
+  });
+  alPasar(luna, function () {
+    varias(5, 160, function () {
+      var l = dondeEsta(luna);
+      quitarAlAcabar(crear("destello", {
+        left: (l.x + azar(-8, l.ancho + 6)) + "%",
+        top: (l.y + azar(-8, l.alto + 6)) + "%"
+      }));
+    });
+  });
+  function pasaAlguien() {
+    if (!sombra) return;
+    sombra.classList.remove("pasa");
+    void sombra.offsetWidth;              // para que la animación vuelva a empezar
+    sombra.classList.add("pasa");
+  }
+  alPasar(ventanas.v1, pasaAlguien, 3600);
+  escena.querySelectorAll(".mariposa").forEach(function (m) {
+    alPasar(m, function () {
+      m.classList.add("huye");
+      setTimeout(function () { m.classList.remove("huye"); }, azar(6000, 10000));
+    }, 6000);
+  });
+  alPasar(gato, function () {
+    gato.classList.add("salta", "maulla");
+    setTimeout(function () { gato.classList.remove("salta"); }, 500);
+    setTimeout(function () { gato.classList.remove("maulla"); }, 1400);
+  }, 1500);
+
+  // Con «reducir movimiento» se queda aquí: el ambiente (humo, nubes,
+  // vaivén, parpadeos) sigue; lo que cruza la escena, no.
+  if (quieto) return;
+
+  // hojas que caen del árbol
   cadaTanto(1500, 3500, function () { hoja(false); });
 
   // rachas de viento: el árbol y la hierba se agitan y vuelan unas hojas
@@ -368,10 +472,7 @@
 
   // alguien pasa por delante de la luz del salón
   cadaTanto(9000, 22000, function () {
-    if (!sombra || !ventanas.v1.classList.contains("encendida")) return;
-    sombra.classList.remove("pasa");
-    void sombra.offsetWidth;              // para que la animación vuelva a empezar
-    sombra.classList.add("pasa");
+    if (ventanas.v1 && ventanas.v1.classList.contains("encendida")) pasaAlguien();
   });
 
   // la rueda de la caja fuerte, de vez en cuando (y al pasar el ratón, en CSS)
@@ -380,13 +481,30 @@
     cadaTanto(12000, 26000, function () { rueda.classList.add("girando"); });
   }
 
-  // el gato: el primer paseo pronto, luego cada tanto
-  gato.addEventListener("animationend", function (e) {
-    if (e.target === gato) gato.classList.remove("paseo");
-  });
-  function pasear() { gato.classList.add("paseo"); }
+  // El gato cruza por fases: anda hasta la mitad, se sienta un rato
+  // (parpadea, mueve la cola) y sigue. Con «transition» en left, y el JS
+  // encadena los tramos, para que las patas solo se muevan cuando anda.
+  var paseando = false;
+  function tramo(hasta, segundos, luego) {
+    gato.classList.add("anda");
+    gato.style.transition = "left " + segundos + "s linear";
+    gato.style.left = hasta + "%";
+    setTimeout(function () { gato.classList.remove("anda"); luego(); }, segundos * 1000);
+  }
+  function pasear() {
+    if (paseando) return;
+    paseando = true;
+    gato.style.transition = "none";
+    gato.style.left = "104%";
+    void gato.offsetWidth;
+    tramo(azar(40, 55), azar(5.5, 7), function () {
+      gato.classList.add("sentado");
+      setTimeout(function () {
+        gato.classList.remove("sentado");
+        tramo(-14, azar(5.5, 7), function () { paseando = false; });
+      }, azar(2500, 4500));
+    });
+  }
   setTimeout(function () { if (activa()) pasear(); }, azar(2500, 5000));
-  cadaTanto(18000, 35000, function () {
-    if (!gato.classList.contains("paseo")) pasear();
-  });
+  cadaTanto(18000, 35000, pasear);
 })();
