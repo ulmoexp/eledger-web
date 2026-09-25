@@ -563,17 +563,17 @@ footer a:hover { color: var(--acento); }
 
 /* ====================================================================
    Escena de la portada: una casa en el campo, hecha solo con CSS (las
-   formas) y un poco de JS (assets/escena.js: estrellas, humo, luciérnagas
-   y la hora del día según el reloj de quien la mira — nada sale de su
-   navegador). Todo va en % para que escale con el marco.
+   formas) y un poco de JS (assets/escena.js). El JS lleva el reloj: con la
+   hora de quien la mira calcula la paleta (interpolando entre madrugada,
+   alba, día, tarde, anochecer y noche), mueve el sol y la luna por su arco,
+   enciende las ventanas y añade lo que va y viene (humo, hojas, estrellas
+   fugaces, el gato). Nada sale de su navegador. Todo va en % para que
+   escale con el marco. Sin JS se ve de día, quieta.
    ==================================================================== */
-@property --cielo-a { syntax: "<color>"; inherits: true; initial-value: #BFD9E0; }
-@property --cielo-b { syntax: "<color>"; inherits: true; initial-value: #F1EEDF; }
-
 .escena-marco { margin: 0; align-self: start; }
 
 .escena {
-  /* paleta de "día" por defecto; data-momento la cambia */
+  /* paleta de «día», la de sin JS; escena.js la reescribe según la hora */
   --cielo-a: #B9D6DD;
   --cielo-b: #F1EEDF;
   --astro: #F2C94C;
@@ -590,7 +590,10 @@ footer a:hover { color: var(--acento); }
   --copa-2: #5E8C62;
   --camino: #D6C49A;
   --valla: #EDE3CC;
+  --nube: rgba(255, 255, 255, 0.85);
+  --humo: rgba(240, 240, 240, 0.7);
   --niebla: 0;
+  --noche: 0;          /* 0 = pleno día, 1 = noche cerrada */
 
   position: relative;
   aspect-ratio: 5 / 4;
@@ -599,89 +602,77 @@ footer a:hover { color: var(--acento); }
   box-shadow: 6px 6px 0 var(--linea);
   background: linear-gradient(var(--cielo-a), var(--cielo-b) 62%);
   cursor: pointer;
-  transition: --cielo-a 1.6s ease, --cielo-b 1.6s ease;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
-.escena * { transition: background-color 1.6s ease, opacity 1.6s ease, box-shadow 1.6s ease; }
 .escena:focus-visible { outline: 2px solid var(--acento); outline-offset: 4px; }
-
-.escena[data-momento="alba"] {
-  --cielo-a: #C4BEDA; --cielo-b: #F6D8C4; --astro: #F6B889;
-  --monte-1: #A7AE9C; --monte-2: #8B9A83; --prado: #75906A; --prado-2: #66825D;
-  --ventana: #E9C98E; --niebla: 0.55;
-}
-.escena[data-momento="tarde"] {
-  --cielo-a: #E7A782; --cielo-b: #F7DDB3; --astro: #E98A4E;
-  --monte-1: #A49A7A; --monte-2: #8A8566; --prado: #7C8A5C; --prado-2: #6D7A50;
-  --pared: #E6CBA2; --ventana: #F4C66A; --copa: #4E6A45; --copa-2: #5D7A4F;
-  --camino: #D9B98A;
-}
-.escena[data-momento="noche"] {
-  --cielo-a: #141C2B; --cielo-b: #33415A; --astro: #EFE8D2;
-  --monte-1: #2F3D44; --monte-2: #26343A; --prado: #22322C; --prado-2: #1C2A25;
-  --pared: #5C5A5A; --pared-raya: rgba(0, 0, 0, 0.18); --tejado: #3E2A28;
-  --madera: #2A1E19; --ventana: #F4C66A; --copa: #1D2D26; --copa-2: #243730;
-  --camino: #4A4A45; --valla: #6B6A66;
-}
 
 .escena > div { position: absolute; }
 
-/* sol / luna: escena.js lo coloca según el momento */
-.astro {
+/* --- sol y luna: escena.js los lleva por su arco según la hora; los montes
+   van después en el HTML, así que se ponen DETRÁS de ellos --- */
+.astro,
+.luna {
   width: 13%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: var(--astro);
   left: 64%;
   top: 12%;
+}
+.astro {
+  background: var(--astro);
   box-shadow: 0 0 0 10px color-mix(in srgb, var(--astro) 22%, transparent),
               0 0 60px color-mix(in srgb, var(--astro) 60%, transparent);
-  transition: left 1.6s ease, top 1.6s ease, background-color 1.6s ease,
-              box-shadow 1.6s ease, filter 1.6s ease;
 }
 /* La luna es una media luna RECORTADA (mask), no un disco con un círculo
-   del color del cielo encima: el resplandor del disco era un box-shadow
-   redondo, y el mordisco tapaba la luna pero dejaba el halo de luna llena
-   asomando alrededor. De noche el disco y su box-shadow se apagan y el
-   halo lo pone drop-shadow, que sigue la forma de lo que se ve. */
-.astro::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: var(--astro);
+   del color del cielo encima: con el mordisco pintado, el halo de luna llena
+   asomaba alrededor. El halo lo pone drop-shadow, que sigue la forma. */
+.luna {
+  width: 11%;
+  top: 80%;
+  background: #EFE8D2;
   -webkit-mask: radial-gradient(ellipse 38% 50% at 68% 44%, transparent 98%, #000 100%);
           mask: radial-gradient(ellipse 38% 50% at 68% 44%, transparent 98%, #000 100%);
-  opacity: 0;
-  transition: opacity 1.6s ease;
+  filter: drop-shadow(0 0 6px rgba(239, 232, 210, 0.55))
+          drop-shadow(0 0 22px rgba(239, 232, 210, 0.45));
 }
-.escena[data-momento="noche"] .astro {
-  background-color: transparent;
-  box-shadow: 0 0 0 10px transparent, 0 0 60px transparent;
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--astro) 55%, transparent))
-          drop-shadow(0 0 22px color-mix(in srgb, var(--astro) 45%, transparent));
-}
-.escena[data-momento="noche"] .astro::after { opacity: 1; }
 
-.estrellas { inset: 0 0 40% 0; opacity: 0; }
-.escena[data-momento="noche"] .estrellas { opacity: 1; }
+/* --- estrellas: cada una tiene su umbral y sale cuando la noche lo pasa,
+   así aparecen poco a poco al oscurecer. El parpadeo va en el brillo y no
+   en la opacidad, que es la que lleva la hora. --- */
+.estrellas { inset: 0 0 40% 0; }
 .estrella {
   position: absolute;
   width: 2px;
   height: 2px;
   border-radius: 50%;
   background: #F4EFDD;
+  opacity: clamp(0, calc((var(--noche) - var(--umbral, 0.5)) * 5), 1);
   animation: titilar 3s ease-in-out infinite;
 }
-@keyframes titilar { 50% { opacity: 0.25; } }
+@keyframes titilar { 50% { filter: brightness(0.35); } }
+
+.fugaz {
+  position: absolute;
+  width: 14%;
+  height: 1.5px;
+  background: linear-gradient(to right, #FFFDF2, transparent);
+  border-radius: 1px;
+  pointer-events: none;
+  animation: fugaz 1s ease-in forwards;
+}
+@keyframes fugaz {
+  0% { transform: rotate(-24deg) translateX(0); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: rotate(-24deg) translateX(-240%); opacity: 0; }
+}
 
 .nube {
   top: 16%;
   width: 26%;
   height: 5%;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--nube);
   animation: deriva 70s linear infinite;
 }
 .nube::before,
@@ -694,14 +685,16 @@ footer a:hover { color: var(--acento); }
 .nube::before { width: 42%; aspect-ratio: 1; left: 16%; bottom: 30%; }
 .nube::after { width: 30%; aspect-ratio: 1; left: 48%; bottom: 20%; }
 .nube.n2 { top: 27%; width: 18%; height: 3.6%; animation-duration: 95s; animation-delay: -50s; opacity: 0.8; }
-.escena[data-momento="noche"] .nube { background: rgba(120, 135, 160, 0.35); }
-.escena[data-momento="tarde"] .nube { background: rgba(255, 235, 215, 0.8); }
 @keyframes deriva {
   from { transform: translateX(-120%); left: 0; }
   to { transform: translateX(0); left: 100%; }
 }
 
-.pajaros { top: 22%; left: 12%; width: 20%; height: 8%; animation: volar 40s linear infinite; }
+.pajaros {
+  top: 22%; left: 12%; width: 20%; height: 8%;
+  opacity: clamp(0, calc(1 - var(--noche) * 2), 1);
+  animation: volar 40s linear infinite;
+}
 .pajaro {
   position: absolute;
   width: 12px;
@@ -720,7 +713,6 @@ footer a:hover { color: var(--acento); }
   border-top: 1.5px solid #3A4048;
   border-radius: 50% 50% 0 0;
 }
-.escena[data-momento="noche"] .pajaros { opacity: 0; }
 @keyframes aletear { 50% { transform: scaleY(0.4) translateY(2px); } }
 @keyframes volar {
   from { transform: translate(-60%, 10%); }
@@ -738,7 +730,9 @@ footer a:hover { color: var(--acento); }
   left: 0; right: 0; top: 56%; height: 12%;
   background: linear-gradient(transparent, rgba(255, 255, 255, 0.9), transparent);
   opacity: var(--niebla);
+  animation: niebla 18s ease-in-out infinite alternate;
 }
+@keyframes niebla { to { transform: translateX(4%); } }
 
 .prado {
   left: -10%; right: -10%; top: 63%; bottom: 0;
@@ -781,6 +775,7 @@ footer a:hover { color: var(--acento); }
   border-radius: 50%;
   background: var(--ventana);
   border: 2px solid var(--madera);
+  overflow: hidden;
 }
 .puerta {
   left: 42%; width: 16%; bottom: 0; height: 32%;
@@ -800,6 +795,21 @@ footer a:hover { color: var(--acento); }
   border: 2px solid var(--madera);
   overflow: hidden;
 }
+/* la luz de dentro: una capa cálida que escena.js enciende y apaga según
+   la hora (clase .encendida), por debajo de lo que haya en la ventana */
+.ventana::before,
+.buhardilla::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 60%, #FBD98A, #F4C66A 70%);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.ventana,
+.buhardilla { transition: box-shadow 1.2s ease; }
+.encendida::before { opacity: 1; }
+.encendida { box-shadow: 0 0 18px 4px rgba(244, 198, 106, 0.45); }
 /* el marco en cruz y un reflejo del cristal, por encima de lo que haya
    dentro de la ventana */
 .ventana::after {
@@ -820,19 +830,46 @@ footer a:hover { color: var(--acento); }
     linear-gradient(135deg, transparent 30%, rgba(255, 255, 255, 0.22) 30% 40%, transparent 40%);
 }
 
+/* alguien que pasa por delante de la luz, de vez en cuando */
+.sombra {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 34%;
+  height: 58%;
+  background: rgba(70, 42, 26, 0.5);
+  border-radius: 45% 45% 0 0 / 30% 30% 0 0;
+  transform: translateX(-130%);
+}
+.sombra::before {
+  content: "";
+  position: absolute;
+  left: 24%;
+  width: 52%;
+  bottom: 88%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: inherit;
+}
+.sombra.pasa { animation: pasar 3.4s ease-in-out forwards; }
+@keyframes pasar {
+  from { transform: translateX(-130%); }
+  45%, 55% { transform: translateX(95%); }
+  to { transform: translateX(330%); }
+}
+
 /* lo que se ve por la ventana: una caja fuerte. Es lo que la herramienta
    hace con tus datos — se quedan en casa, guardados. */
 .caja-fuerte {
   position: absolute;
   left: 13%; right: 13%; top: 36%; bottom: -2px;
-  background:
-    radial-gradient(circle at 42% 46%, #E4E7EA 0 12%, #2A3037 13% 19%, transparent 20%),
-    linear-gradient(#6B7580, #474F59);
+  background: linear-gradient(#6B7580, #474F59);
   border: 1.5px solid #262C33;
   border-bottom: 0;
   border-radius: 2px 2px 0 0;
   /* el contorno de la puerta de la caja */
   box-shadow: inset 0 0 0 2px #474F59, inset 0 0 0 3px #8A949F;
+  filter: brightness(calc(1 - var(--noche) * 0.2));
 }
 /* la manivela */
 .caja-fuerte::after {
@@ -842,23 +879,42 @@ footer a:hover { color: var(--acento); }
   background: #C9A45C;
   border-radius: 1px;
 }
-.escena[data-momento="noche"] .caja-fuerte { filter: brightness(0.8); }
-
-/* luz dentro: solo al caer la tarde y de noche */
-.escena[data-momento="tarde"] .ventana,
-.escena[data-momento="noche"] .ventana,
-.escena[data-momento="noche"] .buhardilla { box-shadow: 0 0 18px 4px rgba(244, 198, 106, 0.45); }
+/* la rueda de la combinación: gira de vez en cuando, y al pasar el ratón */
+.rueda {
+  position: absolute;
+  left: 20%;
+  top: 22%;
+  width: 40%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #2A3037 0 22%, #E4E7EA 24% 62%, #2A3037 64%);
+}
+.rueda::after {
+  content: "";
+  position: absolute;
+  left: 45%;
+  top: 6%;
+  width: 10%;
+  height: 26%;
+  background: #2A3037;
+}
+.rueda.girando,
+.escena:hover .rueda { animation: combinacion 2.6s ease-in-out; }
+@keyframes combinacion {
+  35% { transform: rotate(250deg); }
+  65% { transform: rotate(-70deg); }
+  to { transform: rotate(0); }
+}
 
 .humo {
   position: absolute;
   width: 5%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: rgba(240, 240, 240, 0.7);
+  background: var(--humo);
   pointer-events: none;
   animation: humear 5s ease-out forwards;
 }
-.escena[data-momento="noche"] .humo { background: rgba(150, 160, 175, 0.45); }
 @keyframes humear {
   from { transform: translate(0, 0) scale(0.6); opacity: 0.9; }
   to { transform: translate(var(--dx, 30px), -110px) scale(2.4); opacity: 0; }
@@ -872,6 +928,25 @@ footer a:hover { color: var(--acento); }
 .arbol .c2 { left: 38%; width: 62%; bottom: 24%; aspect-ratio: 1; background: var(--copa-2); }
 .arbol .c3 { left: 16%; width: 66%; bottom: 44%; aspect-ratio: 1; }
 @keyframes mecer { 50% { transform: rotate(1.4deg); } }
+
+.hoja {
+  position: absolute;
+  width: 1.3%;
+  aspect-ratio: 1;
+  border-radius: 0 70% 0 70%;
+  background: var(--copa-2);
+  pointer-events: none;
+  animation: caer 6s ease-in-out forwards;
+}
+.hoja.ocre { background: #C49A46; filter: brightness(calc(1 - var(--noche) * 0.6)); }
+@keyframes caer {
+  0% { transform: translate(0, 0) rotate(0); opacity: 0; }
+  10% { opacity: 1; }
+  30% { transform: translate(calc(var(--dx) * 0.5), calc(var(--dy) * 0.3)) rotate(120deg); }
+  60% { transform: translate(calc(var(--dx) * -0.2), calc(var(--dy) * 0.65)) rotate(220deg); }
+  85% { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) rotate(340deg); opacity: 0; }
+}
 
 /* --- valla y primer plano --- */
 /* la valla va en dos tramos, con la entrada de la parcela donde la cruza
@@ -924,6 +999,93 @@ footer a:hover { color: var(--acento); }
   30% { opacity: 1; }
   50% { transform: translate(14px, -10px); }
   70% { opacity: 0.8; }
+}
+
+/* --- mariposas, de día --- */
+.mariposa {
+  position: absolute;
+  width: 1.8%;
+  aspect-ratio: 1;
+  pointer-events: none;
+  animation: vagar 16s ease-in-out infinite alternate;
+}
+.mariposa::before,
+.mariposa::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: var(--color, #F2C94C);
+  border-radius: 60% 10% 60% 30%;
+  animation: batir 0.35s ease-in-out infinite alternate;
+}
+.mariposa::before { left: 0; transform-origin: 100% 50%; }
+.mariposa::after { right: 0; transform-origin: 0 50%; border-radius: 10% 60% 30% 60%; }
+.escena:not([data-momento="dia"]) .mariposa { display: none; }
+@keyframes batir { to { transform: scaleX(0.25); } }
+@keyframes vagar {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(40px, -18px); }
+  45% { transform: translate(90px, 6px); }
+  70% { transform: translate(50px, -26px); }
+  100% { transform: translate(120px, -8px); }
+}
+
+/* --- el gato: cruza el prado de vez en cuando, se sienta a mitad y sigue.
+   Mira a la izquierda, que es hacia donde va. De noche le brillan los ojos. --- */
+.gato {
+  position: absolute;
+  bottom: 2.5%;
+  left: 104%;
+  width: 7%;
+  aspect-ratio: 2 / 1.1;
+  pointer-events: none;
+}
+.gato.paseo { animation: paseo 20s linear forwards; }
+.gato > span { position: absolute; background: #2B2522; }
+.gato .cuerpo { left: 22%; right: 12%; bottom: 22%; height: 42%; border-radius: 50%; }
+.gato .pata { bottom: 0; width: 7%; height: 32%; border-radius: 2px; transform-origin: 50% 0; }
+.gato .pata.a { left: 30%; }
+.gato .pata.b { left: 66%; }
+.gato.paseo .pata { animation: paso 0.5s ease-in-out infinite alternate; }
+.gato.paseo .pata.b { animation-delay: -0.25s; }
+.gato .cabeza { left: 4%; bottom: 44%; width: 30%; aspect-ratio: 1; border-radius: 50%; }
+.gato .cabeza::before,
+.gato .cabeza::after {
+  content: "";
+  position: absolute;
+  top: -32%;
+  width: 40%;
+  height: 50%;
+  background: inherit;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.gato .cabeza::before { left: 2%; }
+.gato .cabeza::after { right: 2%; }
+.gato .ojos {
+  left: 10%; bottom: 62%; width: 18%; height: 8%;
+  background:
+    radial-gradient(circle, #F4E07A 45%, transparent 50%) 0 0 / 40% 100% no-repeat,
+    radial-gradient(circle, #F4E07A 45%, transparent 50%) 100% 0 / 40% 100% no-repeat;
+  opacity: var(--noche);
+}
+.gato .cola {
+  right: 0; bottom: 48%; width: 18%; height: 70%;
+  background: none;
+  border-top: 2px solid #2B2522;
+  border-right: 2px solid #2B2522;
+  border-radius: 0 80% 0 0;
+  transform-origin: 0 100%;
+  animation: cola 2.4s ease-in-out infinite alternate;
+}
+@keyframes paso { from { transform: rotate(18deg); } to { transform: rotate(-18deg); } }
+@keyframes cola { to { transform: rotate(-16deg); } }
+@keyframes paseo {
+  0% { left: 104%; }
+  40% { left: 50%; }
+  60% { left: 50%; }
+  100% { left: -12%; }
 }
 
 .escena-marco figcaption {

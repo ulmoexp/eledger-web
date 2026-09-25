@@ -1,8 +1,12 @@
 /* Escena de la portada: casa en el campo.
-   Las formas son CSS (assets/estilos.css); aquí solo se añaden las piezas
-   repetidas (estrellas, briznas, luciérnagas), el humo de la chimenea y la
-   hora del día, que sale del reloj de quien mira la página. No se pide
-   nada a ningún servidor ni se guarda nada. */
+   Las formas son CSS (assets/estilos.css). Aquí va el reloj: con la hora de
+   quien mira la página se calcula la luz minuto a minuto (la paleta se
+   interpola entre madrugada, alba, día, tarde, anochecer y noche), el sol y
+   la luna recorren su arco y las ventanas se encienden y se apagan. También
+   las piezas que van y vienen: estrellas (y alguna fugaz), humo, hojas,
+   mariposas, luciérnagas, el gato y la rueda de la caja fuerte.
+   Un clic adelanta la escena, en cámara rápida, hasta el siguiente momento
+   del día. No se pide nada a ningún servidor ni se guarda nada. */
 (function () {
   "use strict";
 
@@ -10,22 +14,214 @@
   if (!escena) return;
   var quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  var MOMENTOS = ["alba", "dia", "tarde", "noche"];
-  // posición del sol (o la luna) en % del marco, por momento
-  var ASTRO = {
-    alba:  { left: 3,  top: 20 },
-    dia:   { left: 64, top: 10 },
-    tarde: { left: 84, top: 30 },
-    noche: { left: 70, top: 9 }
+  // ------------------------------------------------------------ colores
+  function color(valor) {
+    if (typeof valor === "number") return valor;
+    var m = /^#(..)(..)(..)$/.exec(valor);
+    if (m) return [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16), 1];
+    m = /rgba\(([^)]+)\)/.exec(valor);
+    var v = m[1].split(",").map(Number);
+    return [v[0], v[1], v[2], v[3]];
+  }
+  function texto(c) {
+    if (typeof c === "number") return String(Math.round(c * 1000) / 1000);
+    return "rgba(" + Math.round(c[0]) + "," + Math.round(c[1]) + "," +
+      Math.round(c[2]) + "," + Math.round(c[3] * 1000) / 1000 + ")";
+  }
+  function mezclar(a, b, t) {
+    var p = {};
+    for (var k in a) {
+      var x = color(a[k]), y = color(b[k]);
+      if (typeof x === "number") { p[k] = x + (y - x) * t; continue; }
+      p[k] = texto([0, 1, 2, 3].map(function (i) { return x[i] + (y[i] - x[i]) * t; }));
+    }
+    return p;
+  }
+  function con(base, cambios) {
+    var p = {};
+    for (var k in base) p[k] = base[k];
+    for (k in cambios) p[k] = cambios[k];
+    return p;
+  }
+
+  // ------------------------------------------------------------ paletas
+  // Mismos nombres que las variables CSS de .escena. Colores en hex o rgba;
+  // "niebla" y "noche" son números (0-1).
+  var DIA = {
+    "cielo-a": "#B9D6DD", "cielo-b": "#F1EEDF", "astro": "#F2C94C",
+    "monte-1": "#A9BE98", "monte-2": "#8BAA83", "prado": "#7A9E6E",
+    "prado-2": "#6A8F60", "pared": "#E3D5B8", "pared-raya": "rgba(120,90,50,0.13)",
+    "tejado": "#8C4A3A", "madera": "#5B3A29", "ventana": "#A9C2C6",
+    "copa": "#4F7A55", "copa-2": "#5E8C62", "camino": "#D6C49A",
+    "valla": "#EDE3CC", "nube": "rgba(255,255,255,0.85)",
+    "humo": "rgba(240,240,240,0.7)", "niebla": 0, "noche": 0
+  };
+  var ALBA = con(DIA, {
+    "cielo-a": "#C4BEDA", "cielo-b": "#F6D8C4", "astro": "#F6B889",
+    "monte-1": "#A7AE9C", "monte-2": "#8B9A83", "prado": "#75906A",
+    "prado-2": "#66825D", "ventana": "#C9C6D2", "nube": "rgba(255,240,235,0.85)",
+    "niebla": 0.55, "noche": 0.05
+  });
+  var TARDE = con(DIA, {
+    "cielo-a": "#E7A782", "cielo-b": "#F7DDB3", "astro": "#E98A4E",
+    "monte-1": "#A49A7A", "monte-2": "#8A8566", "prado": "#7C8A5C",
+    "prado-2": "#6D7A50", "pared": "#E6CBA2", "ventana": "#D9B79A",
+    "copa": "#4E6A45", "copa-2": "#5D7A4F", "camino": "#D9B98A",
+    "nube": "rgba(255,235,215,0.8)", "noche": 0.05
+  });
+  var NOCHE = {
+    "cielo-a": "#141C2B", "cielo-b": "#33415A", "astro": "#E98A4E",
+    "monte-1": "#2F3D44", "monte-2": "#26343A", "prado": "#22322C",
+    "prado-2": "#1C2A25", "pared": "#5C5A5A", "pared-raya": "rgba(0,0,0,0.18)",
+    "tejado": "#3E2A28", "madera": "#2A1E19", "ventana": "#2E3A4C",
+    "copa": "#1D2D26", "copa-2": "#243730", "camino": "#4A4A45",
+    "valla": "#6B6A66", "nube": "rgba(120,135,160,0.35)",
+    "humo": "rgba(150,160,175,0.45)", "niebla": 0, "noche": 1
+  };
+  // El paso de la tarde a la noche en línea recta daba un marrón sucio: el
+  // anochecer tiene su propia paleta, morada. Y la madrugada, la suya.
+  var ANOCHECER = {
+    "cielo-a": "#2B3052", "cielo-b": "#A7727A", "astro": "#E98A4E",
+    "monte-1": "#5E5A62", "monte-2": "#4C4A52", "prado": "#44503F",
+    "prado-2": "#3A4636", "pared": "#9E8C82", "pared-raya": "rgba(0,0,0,0.15)",
+    "tejado": "#5E3530", "madera": "#3B2A22", "ventana": "#4A4E66",
+    "copa": "#33453A", "copa-2": "#3C5042", "camino": "#8C7A68",
+    "valla": "#A89F92", "nube": "rgba(200,160,170,0.5)",
+    "humo": "rgba(190,180,190,0.55)", "niebla": 0.15, "noche": 0.6
+  };
+  var MADRUGADA = con(mezclar(NOCHE, ALBA, 0.4), {
+    "cielo-a": "#232B48", "cielo-b": "#7D6F8E", "noche": 0.7
+  });
+
+  // hora del día -> paleta; entre dos, se interpola
+  var TRAMOS = [
+    [0, NOCHE], [5.25, NOCHE], [6.1, MADRUGADA], [7.0, ALBA], [8.75, DIA],
+    [17.25, DIA], [19.25, TARDE], [20.6, ANOCHECER], [21.75, NOCHE], [24, NOCHE]
+  ];
+
+  // --- sol y luna: cuándo salen, cuánto duran arriba y su arco (% del marco) ---
+  var SOL = { sale: 6.6, dura: 13.8, izq: 3, ancho: 84, bajo: 62, alto: 52 };
+  var LUNA = { sale: 20.2, dura: 11, izq: 8, ancho: 82, bajo: 64, alto: 50 };
+
+  // --- cuándo hay luz en cada ventana (horas; pueden pasar de las 24) ---
+  var LUCES = {
+    v1: [[18.75, 24.75], [6.5, 8.0]],     // el salón: hasta pasada la medianoche
+    v2: [[19.25, 22.5]],                  // la habitación de la caja fuerte
+    buhardilla: [[20.0, 23.5], [6.25, 7.25]]
   };
 
-  function momentoDe(hora) {
-    if (hora >= 6 && hora < 9) return "alba";
-    if (hora >= 9 && hora < 18) return "dia";
-    if (hora >= 18 && hora < 21) return "tarde";
+  function paletaDe(h) {
+    for (var i = 1; i < TRAMOS.length; i++) {
+      if (h <= TRAMOS[i][0]) {
+        var a = TRAMOS[i - 1], b = TRAMOS[i];
+        var t = (h - a[0]) / (b[0] - a[0]);
+        // suavizado: que los colores no cambien a golpes al pasar de tramo
+        return mezclar(a[1], b[1], t * t * (3 - 2 * t));
+      }
+    }
+    return NOCHE;
+  }
+
+  function momentoDe(h) {
+    if (h >= 5.5 && h < 8.75) return "alba";
+    if (h >= 8.75 && h < 18.25) return "dia";
+    if (h >= 18.25 && h < 21.25) return "tarde";
     return "noche";
   }
 
+  // ------------------------------------------------------------ pintar
+  var astro = escena.querySelector(".astro");
+  var luna = escena.querySelector(".luna");
+  var ventanas = {
+    v1: escena.querySelector(".ventana.v1"),
+    v2: escena.querySelector(".ventana.v2"),
+    buhardilla: escena.querySelector(".buhardilla")
+  };
+  var nocheAhora = 0;
+
+  function arco(el, h, a) {
+    if (!el) return;
+    var t = ((h - a.sale) % 24 + 24) % 24 / a.dura;
+    if (t > 1) {                          // bajo el horizonte: escondido
+      el.style.top = "90%";
+      return;
+    }
+    el.style.left = (a.izq + a.ancho * t) + "%";
+    el.style.top = (a.bajo - a.alto * Math.sin(Math.PI * t)) + "%";
+  }
+
+  function encendida(h, rangos) {
+    for (var i = 0; i < rangos.length; i++) {
+      var r = rangos[i];
+      if ((h >= r[0] && h < r[1]) || (h + 24 >= r[0] && h + 24 < r[1])) return true;
+    }
+    return false;
+  }
+
+  function pintar(h) {
+    var p = paletaDe(h);
+    for (var k in p) {
+      escena.style.setProperty("--" + k, typeof p[k] === "number" ? texto(p[k]) : p[k]);
+    }
+    nocheAhora = p.noche;
+    escena.setAttribute("data-momento", momentoDe(h));
+    arco(astro, h, SOL);
+    arco(luna, h, LUNA);
+    for (var v in ventanas) {
+      if (ventanas[v]) ventanas[v].classList.toggle("encendida", encendida(h, LUCES[v]));
+    }
+  }
+
+  // ------------------------------------------------------------ el reloj
+  // desfase: lo que el visitante ha adelantado la escena con clics. La hora
+  // real sigue corriendo por debajo.
+  var desfase = 0;
+  var enCamara = false;
+
+  function horaReal() {
+    var d = new Date();
+    return d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600;
+  }
+  function horaEscena() { return ((horaReal() + desfase) % 24 + 24) % 24; }
+
+  // al hacer clic, hasta el siguiente de estos momentos
+  var PARADAS = [7.25, 13.0, 19.75, 23.25];
+
+  function adelantar() {
+    if (enCamara) return;
+    var desde = horaEscena();
+    var hasta = PARADAS.filter(function (x) { return x > desde + 0.25; })[0];
+    if (hasta === undefined) hasta = PARADAS[0] + 24;
+    var salto = hasta - desde;
+    if (quieto) {
+      desfase += salto;
+      pintar(horaEscena());
+      return;
+    }
+    // cámara rápida: unas tres horas de reloj en algo más de un segundo
+    var dura = Math.min(3200, 700 + salto * 380);
+    var inicio = null;
+    enCamara = true;
+    requestAnimationFrame(function paso(ahora) {
+      if (inicio === null) inicio = ahora;
+      var t = Math.min(1, (ahora - inicio) / dura);
+      var suave = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      pintar((desde + salto * suave) % 24);
+      if (t < 1) { requestAnimationFrame(paso); return; }
+      desfase += salto;
+      enCamara = false;
+    });
+  }
+
+  escena.addEventListener("click", adelantar);
+  escena.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); adelantar(); }
+  });
+
+  pintar(horaEscena());
+  setInterval(function () { if (!enCamara) pintar(horaEscena()); }, 20000);
+
+  // ------------------------------------------------------------ piezas fijas
   function crear(clase, estilos, padre) {
     var el = document.createElement("span");
     el.className = clase;
@@ -33,15 +229,20 @@
     (padre || escena).appendChild(el);
     return el;
   }
-
   function azar(min, max) { return min + Math.random() * (max - min); }
+  function quitarAlAcabar(el) {
+    el.addEventListener("animationend", function (e) {
+      if (e.target === el) el.remove();
+    });
+  }
 
-  // --- piezas repetidas ---
   var cielo = escena.querySelector(".estrellas");
   for (var i = 0; i < 46; i++) {
     crear("estrella", {
       left: azar(0, 100) + "%",
       top: azar(0, 100) + "%",
+      // cada una sale con un grado de oscuridad distinto: van apareciendo
+      "--umbral": azar(0.25, 0.8).toFixed(2),
       "animation-delay": azar(-3, 0) + "s",
       transform: "scale(" + azar(0.6, 1.4) + ")"
     }, cielo);
@@ -64,54 +265,97 @@
       "animation-duration": azar(4, 8) + "s"
     });
   }
+  ["#F2C94C", "#F4F1E8"].forEach(function (c, n) {
+    crear("mariposa", {
+      left: (azar(50, 60) - n * 38) + "%",
+      top: azar(66, 76) + "%",
+      "--color": c,
+      "animation-delay": azar(-16, 0) + "s"
+    });
+  });
+  var sombra = ventanas.v1 ? crear("sombra", {}, ventanas.v1) : null;
+  var rueda = escena.querySelector(".rueda");
 
-  // --- momento del día ---
-  var manual = false;
-
-  function pintar(momento) {
-    escena.setAttribute("data-momento", momento);
-    var astro = escena.querySelector(".astro");
-    astro.style.left = ASTRO[momento].left + "%";
-    astro.style.top = ASTRO[momento].top + "%";
-  }
-
-  function siguiente() {
-    manual = true;
-    var actual = escena.getAttribute("data-momento");
-    pintar(MOMENTOS[(MOMENTOS.indexOf(actual) + 1) % MOMENTOS.length]);
-  }
-
-  escena.addEventListener("click", siguiente);
-  escena.addEventListener("keydown", function (e) {
-    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); siguiente(); }
+  var gato = crear("gato", {});
+  ["cuerpo", "pata a", "pata b", "cabeza", "ojos", "cola"].forEach(function (c) {
+    crear(c, {}, gato);
   });
 
-  pintar(momentoDe(new Date().getHours()));
-  setInterval(function () {
-    if (!manual) pintar(momentoDe(new Date().getHours()));
-  }, 60000);
-
-  // --- humo de la chimenea ---
   if (quieto) return;
-  var chimenea = escena.querySelector(".chimenea");
-  var visible = true;
 
+  // ------------------------------------------------------------ lo que va y viene
+  // Nada se mueve si la escena no se ve o la pestaña está en segundo plano.
+  var visible = true;
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(function (entradas) {
       visible = entradas[0].isIntersecting;
     }).observe(escena);
   }
+  function activa() { return visible && !document.hidden; }
 
-  function bocanada() {
-    if (!visible || document.hidden) return;
+  // cada cosa a su ritmo, con algo de azar para que no se note el reloj
+  function cadaTanto(min, max, fn) {
+    setTimeout(function vuelta() {
+      if (activa()) fn();
+      setTimeout(vuelta, azar(min, max));
+    }, azar(min, max));
+  }
+
+  // humo de la chimenea
+  var chimenea = escena.querySelector(".chimenea");
+  setInterval(function () {
+    if (!activa()) return;
     var marco = escena.getBoundingClientRect();
     var c = chimenea.getBoundingClientRect();
-    var humo = crear("humo", {
+    quitarAlAcabar(crear("humo", {
       left: ((c.left + c.width / 2 - marco.left) / marco.width * 100 - 2.5) + "%",
       top: ((c.top - marco.top) / marco.height * 100 - 3) + "%",
       "--dx": azar(15, 45) + "px"
-    });
-    humo.addEventListener("animationend", function () { humo.remove(); });
+    }));
+  }, 800);
+
+  // hojas que caen del árbol
+  cadaTanto(2500, 6000, function () {
+    var arriba = azar(32, 48);
+    quitarAlAcabar(crear(Math.random() < 0.3 ? "hoja ocre" : "hoja", {
+      left: azar(64, 82) + "%",
+      top: arriba + "%",
+      "--dx": azar(-40, 30) + "px",
+      "--dy": ((azar(78, 88) - arriba) / 100 * escena.clientHeight) + "px",
+      "animation-duration": azar(5, 7.5) + "s"
+    }));
+  });
+
+  // estrellas fugaces, solo con la noche cerrada
+  cadaTanto(5000, 14000, function () {
+    if (nocheAhora < 0.8) return;
+    quitarAlAcabar(crear("fugaz", {
+      left: azar(30, 85) + "%",
+      top: azar(4, 26) + "%"
+    }));
+  });
+
+  // alguien pasa por delante de la luz del salón
+  cadaTanto(9000, 22000, function () {
+    if (!sombra || !ventanas.v1.classList.contains("encendida")) return;
+    sombra.classList.remove("pasa");
+    void sombra.offsetWidth;              // para que la animación vuelva a empezar
+    sombra.classList.add("pasa");
+  });
+
+  // la rueda de la caja fuerte, de vez en cuando (y al pasar el ratón, en CSS)
+  if (rueda) {
+    rueda.addEventListener("animationend", function () { rueda.classList.remove("girando"); });
+    cadaTanto(12000, 26000, function () { rueda.classList.add("girando"); });
   }
-  setInterval(bocanada, 800);
+
+  // el gato: el primer paseo pronto, luego cada tanto
+  gato.addEventListener("animationend", function (e) {
+    if (e.target === gato) gato.classList.remove("paseo");
+  });
+  function pasear() { gato.classList.add("paseo"); }
+  setTimeout(function () { if (activa()) pasear(); }, azar(6000, 12000));
+  cadaTanto(35000, 60000, function () {
+    if (!gato.classList.contains("paseo")) pasear();
+  });
 })();
