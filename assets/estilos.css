@@ -623,12 +623,12 @@ footer a:hover { color: var(--acento); }
   background: var(--astro);
   box-shadow: 0 0 0 10px color-mix(in srgb, var(--astro) 22%, transparent),
               0 0 60px color-mix(in srgb, var(--astro) 60%, transparent);
-  animation: respirar 5s ease-in-out infinite;
+  animation: respirar 10s ease-in-out infinite;
 }
 @keyframes respirar {
   50% {
-    box-shadow: 0 0 0 16px color-mix(in srgb, var(--astro) 14%, transparent),
-                0 0 90px color-mix(in srgb, var(--astro) 70%, transparent);
+    box-shadow: 0 0 0 12px color-mix(in srgb, var(--astro) 18%, transparent),
+                0 0 72px color-mix(in srgb, var(--astro) 64%, transparent);
   }
 }
 /* La luna es una media luna RECORTADA (mask), no un disco con un círculo
@@ -642,7 +642,7 @@ footer a:hover { color: var(--acento); }
           mask: radial-gradient(ellipse 38% 50% at 68% 44%, transparent 98%, #000 100%);
   filter: drop-shadow(0 0 6px rgba(239, 232, 210, 0.55))
           drop-shadow(0 0 22px rgba(239, 232, 210, 0.45));
-  animation: brillo-luna 6s ease-in-out infinite;
+  animation: brillo-luna 12s ease-in-out infinite;
 }
 @keyframes brillo-luna {
   50% { filter: drop-shadow(0 0 9px rgba(239, 232, 210, 0.7))
@@ -662,7 +662,7 @@ footer a:hover { color: var(--acento); }
   opacity: clamp(0, calc((var(--noche) - var(--umbral, 0.5)) * 5), 1);
   animation: titilar var(--duracion, 3s) ease-in-out var(--retardo, 0s) infinite;
 }
-@keyframes titilar { 50% { filter: brightness(0.35); } }
+@keyframes titilar { 50% { filter: brightness(0.6); } }
 
 .fugaz {
   position: absolute;
@@ -671,7 +671,7 @@ footer a:hover { color: var(--acento); }
   background: linear-gradient(to right, #FFFDF2, transparent);
   border-radius: 1px;
   pointer-events: none;
-  animation: fugaz 1s ease-in forwards;
+  animation: fugaz 1.6s ease-in forwards;
 }
 @keyframes fugaz {
   0% { transform: rotate(-24deg) translateX(0); opacity: 0; }
@@ -685,7 +685,7 @@ footer a:hover { color: var(--acento); }
   height: 5%;
   border-radius: 999px;
   background: var(--nube);
-  animation: deriva 42s linear infinite;
+  animation: deriva 110s linear infinite;
   animation-delay: -12s;
 }
 .nube::before,
@@ -697,8 +697,8 @@ footer a:hover { color: var(--acento); }
 }
 .nube::before { width: 42%; aspect-ratio: 1; left: 16%; bottom: 30%; }
 .nube::after { width: 30%; aspect-ratio: 1; left: 48%; bottom: 20%; }
-.nube.n2 { top: 27%; width: 18%; height: 3.6%; animation-duration: 58s; animation-delay: -40s; opacity: 0.8; }
-.nube.n3 { top: 8%; width: 20%; height: 4%; animation-duration: 75s; animation-delay: -20s; opacity: 0.65; }
+.nube.n2 { top: 27%; width: 18%; height: 3.6%; animation-duration: 150s; animation-delay: -95s; opacity: 0.8; }
+.nube.n3 { top: 8%; width: 20%; height: 4%; animation-duration: 190s; animation-delay: -60s; opacity: 0.65; }
 @keyframes deriva {
   from { transform: translateX(-120%); left: 0; }
   to { transform: translateX(0); left: 100%; }
@@ -709,7 +709,7 @@ footer a:hover { color: var(--acento); }
   top: 22%; left: 0; width: 20%; height: 8%;
   opacity: clamp(0, calc(1 - var(--noche) * 2), 1);
   pointer-events: none;
-  animation: volar 16s linear forwards;
+  animation: volar 26s linear forwards;
 }
 .pajaros.al-reves { animation-name: volar-al-reves; }
 .pajaros.al-reves .pajaro { transform: scaleX(-1); }
@@ -719,7 +719,7 @@ footer a:hover { color: var(--acento); }
   height: 6px;
   border-top: 1.5px solid #3A4048;
   border-radius: 50% 50% 0 0;
-  animation: aletear 0.9s ease-in-out infinite;
+  animation: aletear 1.3s ease-in-out infinite;
 }
 .pajaro::after {
   content: "";
@@ -752,7 +752,7 @@ footer a:hover { color: var(--acento); }
   left: 0; right: 0; top: 56%; height: 12%;
   background: linear-gradient(transparent, rgba(255, 255, 255, 0.9), transparent);
   opacity: var(--niebla);
-  animation: niebla 18s ease-in-out infinite alternate;
+  animation: niebla 30s ease-in-out infinite alternate;
 }
 @keyframes niebla { to { transform: translateX(4%); } }
 
@@ -830,8 +830,8 @@ footer a:hover { color: var(--acento); }
 }
 .ventana,
 .buhardilla { transition: box-shadow 1.2s ease; }
-.encendida::before { opacity: 1; animation: calidez 4.5s ease-in-out infinite; }
-@keyframes calidez { 30% { opacity: 0.86; } 55% { opacity: 1; } 70% { opacity: 0.93; } }
+.encendida::before { opacity: 1; animation: calidez 9s ease-in-out infinite; }
+@keyframes calidez { 35% { opacity: 0.94; } 60% { opacity: 1; } 80% { opacity: 0.97; } }
 .encendida { box-shadow: 0 0 18px 4px rgba(244, 198, 106, 0.45); }
 /* el marco en cruz y un reflejo del cristal, por encima de lo que haya
    dentro de la ventana */
@@ -853,33 +853,25 @@ footer a:hover { color: var(--acento); }
     linear-gradient(135deg, transparent 30%, rgba(255, 255, 255, 0.22) 30% 40%, transparent 40%);
 }
 
-/* alguien que pasa por delante de la luz, de vez en cuando */
+/* alguien que pasa por delante de la luz, de vez en cuando: una persona
+   de medio cuerpo (SVG que pone escena.js), que cruza despacio con un leve
+   balanceo al andar */
 .sombra {
   position: absolute;
-  bottom: 0;
+  bottom: -4%;
   left: 0;
-  width: 42%;
-  height: 66%;
-  background: rgba(60, 34, 20, 0.72);
-  border-radius: 45% 45% 0 0 / 30% 30% 0 0;
-  transform: translateX(-130%);
+  width: 36%;
+  transform: translateX(-140%);
 }
-.sombra::before {
-  content: "";
-  position: absolute;
-  left: 24%;
-  width: 52%;
-  bottom: 88%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: inherit;
-}
-.sombra.pasa { animation: pasar 4.6s ease-in-out forwards; }
+.sombra svg { display: block; width: 100%; height: auto; }
+.sombra.pasa { animation: pasar 7s ease-in-out forwards; }
+.sombra.pasa svg { animation: balanceo 0.9s ease-in-out infinite alternate; }
 @keyframes pasar {
-  from { transform: translateX(-130%); }
-  45%, 55% { transform: translateX(95%); }
-  to { transform: translateX(330%); }
+  from { transform: translateX(-140%); }
+  45%, 58% { transform: translateX(120%); }
+  to { transform: translateX(380%); }
 }
+@keyframes balanceo { to { transform: translateY(4%); } }
 
 /* lo que se ve por la ventana: una caja fuerte. Es lo que la herramienta
    hace con tus datos — se quedan en casa, guardados. */
@@ -935,29 +927,29 @@ footer a:hover { color: var(--acento); }
   border-radius: 50%;
   background: var(--humo);
   pointer-events: none;
-  animation: humear 5s ease-out forwards;
+  animation: humear 8s ease-out forwards;
 }
 @keyframes humear {
   from { transform: translate(0, 0) scale(0.6); opacity: 0.9; }
-  to { transform: translate(var(--dx, 30px), -110px) scale(2.4); opacity: 0; }
+  to { transform: translate(var(--dx, 30px), -100px) scale(2.2); opacity: 0; }
 }
 
 /* --- árbol --- */
-.arbol { left: 62%; width: 22%; bottom: 24%; height: 50%; transform-origin: 50% 100%; animation: mecer 5s ease-in-out infinite; }
+.arbol { left: 62%; width: 22%; bottom: 24%; height: 50%; transform-origin: 50% 100%; animation: mecer 9s ease-in-out infinite; }
 /* la racha va en «rotate», aparte del «transform» del vaivén: se suman */
-.escena.racha .arbol,
-.escena.racha .brizna { animation: mecer var(--duracion, 3s) ease-in-out var(--retardo, 0s) infinite, racha 2.6s ease-in-out; }
+.escena.racha .arbol { animation: mecer 9s ease-in-out infinite, racha 4s ease-in-out; }
+.escena.racha .brizna { animation: mecer var(--duracion, 5s) ease-in-out var(--retardo, 0s) infinite, racha 4s ease-in-out; }
 @keyframes racha {
-  25% { rotate: -3.5deg; }
-  50% { rotate: 1.5deg; }
-  75% { rotate: -2deg; }
+  30% { rotate: -1.6deg; }
+  60% { rotate: 0.6deg; }
+  80% { rotate: -0.6deg; }
 }
 .arbol > div { position: absolute; border-radius: 50%; background: var(--copa); }
 .arbol .tronco { left: 46%; width: 9%; bottom: 0; height: 36%; border-radius: 2px; background: var(--madera); }
 .arbol .c1 { left: 0; width: 62%; bottom: 26%; aspect-ratio: 1; }
 .arbol .c2 { left: 38%; width: 62%; bottom: 24%; aspect-ratio: 1; background: var(--copa-2); }
 .arbol .c3 { left: 16%; width: 66%; bottom: 44%; aspect-ratio: 1; }
-@keyframes mecer { 0%, 100% { transform: rotate(-1deg); } 50% { transform: rotate(1.6deg); } }
+@keyframes mecer { 0%, 100% { transform: rotate(-0.6deg); } 50% { transform: rotate(0.9deg); } }
 
 .hoja {
   position: absolute;
@@ -966,7 +958,7 @@ footer a:hover { color: var(--acento); }
   border-radius: 0 70% 0 70%;
   background: var(--copa-2);
   pointer-events: none;
-  animation: caer 6s ease-in-out forwards;
+  animation: caer 9s ease-in-out forwards;
 }
 .hoja.ocre { background: #C49A46; filter: brightness(calc(1 - var(--noche) * 0.6)); }
 @keyframes caer {
@@ -1010,7 +1002,7 @@ footer a:hover { color: var(--acento); }
   width: 2px;
   background: var(--prado-2);
   transform-origin: 50% 100%;
-  animation: mecer var(--duracion, 3s) ease-in-out var(--retardo, 0s) infinite;
+  animation: mecer var(--duracion, 5s) ease-in-out var(--retardo, 0s) infinite;
 }
 
 .luciernaga {
@@ -1021,7 +1013,7 @@ footer a:hover { color: var(--acento); }
   background: #F6E27A;
   box-shadow: 0 0 6px 2px rgba(246, 226, 122, 0.7);
   opacity: 0;
-  animation: revolotear var(--duracion, 6s) ease-in-out var(--retardo, 0s) infinite;
+  animation: revolotear var(--duracion, 9s) ease-in-out var(--retardo, 0s) infinite;
 }
 .escena:not([data-momento="noche"]):not([data-momento="tarde"]) .luciernaga { display: none; }
 @keyframes revolotear {
@@ -1036,7 +1028,7 @@ footer a:hover { color: var(--acento); }
   position: absolute;
   width: 2.4%;
   aspect-ratio: 1;
-  animation: vagar 11s ease-in-out var(--retardo, 0s) infinite alternate;
+  animation: vagar 24s ease-in-out var(--retardo, 0s) infinite alternate;
 }
 .mariposa::before,
 .mariposa::after {
@@ -1047,7 +1039,7 @@ footer a:hover { color: var(--acento); }
   height: 100%;
   background: var(--color, #F2C94C);
   border-radius: 60% 10% 60% 30%;
-  animation: batir 0.35s ease-in-out infinite alternate;
+  animation: batir 0.55s ease-in-out infinite alternate;
 }
 .mariposa::before { left: 0; transform-origin: 100% 50%; }
 .mariposa::after { right: 0; transform-origin: 0 50%; border-radius: 10% 60% 30% 60%; }
@@ -1078,18 +1070,18 @@ footer a:hover { color: var(--acento); }
 .gato .pata,
 .gato .cola { transform-box: fill-box; }
 .gato .pata { transform-origin: 50% 0; }
-.gato .cola { transform-origin: 0% 100%; animation: cola 2.2s ease-in-out infinite alternate; }
+.gato .cola { transform-origin: 0% 100%; animation: cola 3.4s ease-in-out infinite alternate; }
 .gato.anda .pata.p1,
-.gato.anda .pata.p4 { animation: paso 0.45s ease-in-out infinite alternate; }
+.gato.anda .pata.p4 { animation: paso 0.62s ease-in-out infinite alternate; }
 .gato.anda .pata.p2,
-.gato.anda .pata.p3 { animation: paso 0.45s ease-in-out -0.45s infinite alternate; }
-.gato.anda .cuerpo-gato { animation: vaiven 0.45s ease-in-out infinite alternate; }
+.gato.anda .pata.p3 { animation: paso 0.62s ease-in-out -0.62s infinite alternate; }
+.gato.anda .cuerpo-gato { animation: vaiven 0.62s ease-in-out infinite alternate; }
 .gato .ojo { fill: #3A2A10; }
 .gato .brillo { fill: #F4E07A; opacity: var(--noche); }
 .gato .parpado { transform-box: fill-box; transform-origin: 50% 0; transform: scaleY(0); }
 .gato.sentado .parpado { animation: parpadeo-gato 3s ease-in-out infinite; }
-.gato.sentado .cola { animation-duration: 0.9s; }
-.gato.salta { animation: salto 0.5s ease-out; }
+.gato.sentado .cola { animation-duration: 1.8s; }
+.gato.salta { animation: salto 0.7s ease-out; }
 .gato .miau {
   position: absolute;
   left: -10%;
@@ -1110,7 +1102,7 @@ footer a:hover { color: var(--acento); }
 @keyframes vaiven { to { transform: translateY(1.5px); } }
 @keyframes cola { from { transform: rotate(-6deg); } to { transform: rotate(14deg); } }
 @keyframes parpadeo-gato { 0%, 92%, 100% { transform: scaleY(0); } 95% { transform: scaleY(1); } }
-@keyframes salto { 40% { translate: 0 -40%; } }
+@keyframes salto { 40% { translate: 0 -22%; } }
 
 /* --- lo que pasa al pasar el ratón --- */
 /* la puerta se entreabre y dentro hay luz */
@@ -1133,7 +1125,7 @@ footer a:hover { color: var(--acento); }
    manivela no cede, la caja vibra y se enciende un piloto rojo. Es de un
    solo disparo (lo lanza escena.js) y acaba en reposo aunque se quite el
    ratón a medias: con :hover, al salir, la rueda volvía de golpe. */
-.rueda.intenta { animation: intento 1.9s cubic-bezier(0.45, 0, 0.3, 1) forwards; }
+.rueda.intenta { animation: intento 2.6s cubic-bezier(0.45, 0, 0.3, 1) forwards; }
 @keyframes intento {
   0% { transform: rotate(0); }
   28% { transform: rotate(230deg); }
@@ -1141,11 +1133,11 @@ footer a:hover { color: var(--acento); }
   72%, 80% { transform: rotate(130deg); }
   100% { transform: rotate(0); }
 }
-.caja-fuerte.falla { animation: vibrar 0.5s linear; }
+.caja-fuerte.falla { animation: vibrar 0.6s linear; }
 .caja-fuerte.falla::after { animation: manivela 0.5s ease-in-out; }
 @keyframes vibrar {
-  15%, 55% { translate: -1.5px 0; }
-  35%, 75% { translate: 1.5px 0; }
+  15%, 55% { translate: -1px 0; }
+  35%, 75% { translate: 1px 0; }
   95% { translate: 0 0; }
 }
 @keyframes manivela { 30% { transform: rotate(-22deg); } 60% { transform: rotate(-8deg); } }
@@ -1173,10 +1165,10 @@ footer a:hover { color: var(--acento); }
           mask: radial-gradient(circle, transparent 36%, #000 38%, transparent 70%);
   opacity: 0;
   transition: opacity 0.5s ease;
-  animation: girar 14s linear infinite;
+  animation: girar 30s linear infinite;
 }
 .astro:hover::before { opacity: 1; }
-.luna.brilla { animation: brillo-fuerte 1.8s ease-in-out; }
+.luna.brilla { animation: brillo-fuerte 3s ease-in-out; }
 @keyframes brillo-fuerte {
   0%, 100% { filter: drop-shadow(0 0 6px rgba(239, 232, 210, 0.55))
                      drop-shadow(0 0 22px rgba(239, 232, 210, 0.45)); }
@@ -1186,9 +1178,9 @@ footer a:hover { color: var(--acento); }
 @keyframes girar { to { transform: rotate(360deg); } }
 
 /* el árbol se sacude (en «rotate», aparte del vaivén) */
-.arbol.sacude { animation: mecer 5s ease-in-out infinite, sacudida 1s ease-in-out; }
+.arbol.sacude { animation: mecer 9s ease-in-out infinite, sacudida 1.8s ease-in-out; }
 @keyframes sacudida {
-  20% { rotate: -3deg; } 40% { rotate: 3deg; } 60% { rotate: -2deg; } 80% { rotate: 1deg; }
+  25% { rotate: -1.6deg; } 50% { rotate: 1.4deg; } 75% { rotate: -0.7deg; }
 }
 
 /* lluvia bajo una nube */
@@ -1198,7 +1190,7 @@ footer a:hover { color: var(--acento); }
   height: 2.2%;
   background: linear-gradient(transparent, rgba(160, 190, 215, 0.9));
   pointer-events: none;
-  animation: llover 0.9s linear forwards;
+  animation: llover 1.2s linear forwards;
 }
 @keyframes llover { to { transform: translateY(var(--caida, 200px)); opacity: 0.2; } }
 
@@ -1210,7 +1202,7 @@ footer a:hover { color: var(--acento); }
   background: #FFF7D6;
   clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
   pointer-events: none;
-  animation: destellar 1.1s ease-out forwards;
+  animation: destellar 1.8s ease-out forwards;
 }
 @keyframes destellar {
   0% { transform: scale(0) rotate(0); opacity: 1; }
@@ -1224,8 +1216,8 @@ footer a:hover { color: var(--acento); }
 /* huir va en «translate», aparte del «transform» de vagar: sale volando
    desde donde esté, sin saltar antes a su sitio de partida */
 .mariposa.huye {
-  animation: vagar 11s ease-in-out var(--retardo, 0s) infinite alternate,
-             huir 1.4s ease-in forwards;
+  animation: vagar 24s ease-in-out var(--retardo, 0s) infinite alternate,
+             huir 2.4s ease-in-out forwards;
 }
 @keyframes huir { to { translate: 70px -170px; opacity: 0; } }
 

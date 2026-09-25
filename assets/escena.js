@@ -245,7 +245,7 @@
       top: azar(0, 100) + "%",
       // cada una sale con un grado de oscuridad distinto: van apareciendo
       "--umbral": azar(0.25, 0.8).toFixed(2),
-      "--duracion": azar(2, 5) + "s",
+      "--duracion": azar(4, 8) + "s",
       "--retardo": azar(-5, 0) + "s",
       transform: "scale(" + azar(0.6, 1.4) + ")"
     }, cielo);
@@ -256,7 +256,7 @@
     crear("brizna", {
       left: (x < 22 ? x : x + 20) + "%",
       height: azar(10, 22) + "px",
-      "--duracion": azar(2.4, 3.6) + "s",
+      "--duracion": azar(4.5, 6.5) + "s",
       "--retardo": azar(-4, 0) + "s"
     });
   }
@@ -265,7 +265,7 @@
       left: azar(5, 95) + "%",
       top: azar(66, 90) + "%",
       "--retardo": azar(-6, 0) + "s",
-      "--duracion": azar(4, 8) + "s"
+      "--duracion": azar(7, 11) + "s"
     });
   }
   ["#F2C94C", "#F4F1E8", "#E98A4E"].forEach(function (c, n) {
@@ -276,7 +276,15 @@
       "--retardo": azar(-16, 0) + "s"
     });
   });
+  // la sombra: una persona de medio cuerpo, cabeza, cuello y hombros
   var sombra = ventanas.v1 ? crear("sombra", {}, ventanas.v1) : null;
+  if (sombra) {
+    sombra.innerHTML = '<svg viewBox="0 0 40 56" aria-hidden="true" fill="rgba(58,34,20,0.62)">' +
+      '<ellipse cx="20" cy="13" rx="7.5" ry="8.5"/>' +
+      '<path d="M16.5 20 h7 v6 h-7 Z"/>' +
+      '<path d="M3 56 C3 40 7 31 14 29 C17 28 23 28 26 29 C33 31 37 40 37 56 Z"/>' +
+      '</svg>';
+  }
   var rueda = escena.querySelector(".rueda");
 
   // El gato, de perfil y mirando a la izquierda. Las patas del lado de
@@ -352,7 +360,7 @@
       width: fuerte ? azar(6, 8) + "%" : ""
     }));
   }
-  setInterval(function () { if (activa()) bocanada(false); }, 800);
+  setInterval(function () { if (activa()) bocanada(false); }, 1500);
 
   // hojas que caen del árbol
   function hoja(viento) {
@@ -362,7 +370,7 @@
       top: arriba + "%",
       "--dx": (viento ? azar(-120, -50) : azar(-40, 30)) + "px",
       "--dy": ((azar(78, 88) - arriba) / 100 * escena.clientHeight) + "px",
-      "animation-duration": azar(4.5, 7) + "s"
+      "animation-duration": azar(7.5, 10.5) + "s"
     }));
   }
 
@@ -384,7 +392,7 @@
     });
   }
 
-  alPasar(chimenea, function () { varias(5, 140, function () { bocanada(true); }); });
+  alPasar(chimenea, function () { varias(3, 350, function () { bocanada(true); }); }, 2500);
   // lo que es de un solo disparo se quita al acabar, y así acaba siempre
   // en reposo aunque el ratón se vaya a medias
   function unDisparo(el, clase) {
@@ -398,11 +406,11 @@
   });
   alPasar(arbol, function () {
     unDisparo(arbol, "sacude");
-    varias(Math.round(azar(4, 7)), 120, function () { hoja(false); });
+    varias(Math.round(azar(2, 4)), 260, function () { hoja(false); });
   }, 1400);
   escena.querySelectorAll(".nube").forEach(function (nube) {
     alPasar(nube, function () {
-      varias(14, 70, function () {
+      varias(9, 130, function () {
         var n = dondeEsta(nube);
         quitarAlAcabar(crear("gota", {
           left: (n.x + azar(0.15, 0.85) * n.ancho) + "%",
@@ -418,7 +426,7 @@
   });
   alPasar(luna, function () {
     unDisparo(luna, "brilla");
-    varias(5, 160, function () {
+    varias(3, 350, function () {
       var l = dondeEsta(luna);
       quitarAlAcabar(crear("destello", {
         left: (l.x + azar(-8, l.ancho + 6)) + "%",
@@ -432,7 +440,7 @@
     void sombra.offsetWidth;              // para que la animación vuelva a empezar
     sombra.classList.add("pasa");
   }
-  alPasar(ventanas.v1, pasaAlguien, 4800);
+  alPasar(ventanas.v1, pasaAlguien, 7200);
 
   // la caja fuerte: alguien prueba la combinación, falla, y la caja vibra
   // con el piloto en rojo
@@ -452,9 +460,9 @@
       setTimeout(function () {
         unDisparo(caja, "falla");
         if (piloto) piloto.classList.add("rojo");
-      }, 1350);
-      setTimeout(function () { if (piloto) piloto.classList.remove("rojo"); }, 2300);
-    }, 2400);
+      }, 1900);
+      setTimeout(function () { if (piloto) piloto.classList.remove("rojo"); }, 3200);
+    }, 3200);
   }
 
   // una mariposa asustada sale volando y, al rato, vuelve con un fundido
@@ -474,13 +482,13 @@
   }, 1500);
 
   // hojas que caen del árbol
-  cadaTanto(1500, 3500, function () { hoja(false); });
+  cadaTanto(7000, 14000, function () { hoja(false); });
 
   // rachas de viento: el árbol y la hierba se agitan y vuelan unas hojas
-  cadaTanto(9000, 18000, function () {
+  cadaTanto(35000, 70000, function () {
     escena.classList.add("racha");
-    for (var n = Math.round(azar(3, 5)); n > 0; n--) setTimeout(hoja, azar(0, 1200), true);
-    setTimeout(function () { escena.classList.remove("racha"); }, 2700);
+    for (var n = Math.round(azar(1, 3)); n > 0; n--) setTimeout(hoja, azar(0, 2000), true);
+    setTimeout(function () { escena.classList.remove("racha"); }, 4100);
   });
 
   // bandadas de pájaros, de día: cada una cruza una vez, a su altura y en
@@ -489,7 +497,7 @@
     if (nocheAhora > 0.5) return;
     var grupo = crear("pajaros" + (Math.random() < 0.5 ? " al-reves" : ""), {
       top: azar(8, 32) + "%",
-      "animation-duration": azar(11, 19) + "s"
+      "animation-duration": azar(22, 32) + "s"
     });
     for (var n = Math.round(azar(2, 4)); n > 0; n--) {
       crear("pajaro", {
@@ -501,10 +509,10 @@
     quitarAlAcabar(grupo);
   }
   setTimeout(function () { if (activa()) bandada(); }, 1200);
-  cadaTanto(6000, 14000, bandada);
+  cadaTanto(20000, 40000, bandada);
 
   // estrellas fugaces, solo con la noche cerrada
-  cadaTanto(5000, 14000, function () {
+  cadaTanto(25000, 50000, function () {
     if (nocheAhora < 0.8) return;
     quitarAlAcabar(crear("fugaz", {
       left: azar(30, 85) + "%",
@@ -513,13 +521,13 @@
   });
 
   // alguien pasa por delante de la luz del salón
-  cadaTanto(9000, 22000, function () {
+  cadaTanto(30000, 60000, function () {
     if (ventanas.v1 && ventanas.v1.classList.contains("encendida")) pasaAlguien();
   });
 
   // la rueda de la caja fuerte, de vez en cuando (y al pasar el ratón, en CSS)
   if (rueda) {
-    cadaTanto(12000, 26000, function () {
+    cadaTanto(45000, 90000, function () {
       if (!rueda.classList.contains("intenta")) rueda.classList.add("girando");
     });
   }
@@ -540,14 +548,14 @@
     gato.style.transition = "none";
     gato.style.left = "104%";
     void gato.offsetWidth;
-    tramo(azar(40, 55), azar(5.5, 7), function () {
+    tramo(azar(40, 55), azar(9, 12), function () {
       gato.classList.add("sentado");
       setTimeout(function () {
         gato.classList.remove("sentado");
-        tramo(-14, azar(5.5, 7), function () { paseando = false; });
-      }, azar(2500, 4500));
+        tramo(-14, azar(9, 12), function () { paseando = false; });
+      }, azar(4000, 7000));
     });
   }
-  setTimeout(function () { if (activa()) pasear(); }, azar(2500, 5000));
-  cadaTanto(18000, 35000, pasear);
+  setTimeout(function () { if (activa()) pasear(); }, azar(8000, 15000));
+  cadaTanto(50000, 90000, pasear);
 })();
