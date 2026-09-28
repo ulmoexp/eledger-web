@@ -1,25 +1,37 @@
 # eledger-web
 
-La web de [Movimientos bancarios](https://github.com/ulmoexp/eledger):
-qué hace, cómo se instala y la guía de uso. Estática, sin build, servida
-por GitHub Pages desde la raíz de `main`.
+La web de **Movimientos bancarios** (eledger), la herramienta que clasifica
+tus movimientos bancarios sin que salgan de tu ordenador:
+**https://ulmoexp.github.io/eledger-web/**
+
+- La herramienta, su código y las descargas están en
+  [ulmoexp/eledger](https://github.com/ulmoexp/eledger)
+  ([última versión](https://github.com/ulmoexp/eledger/releases/latest)).
+- ¿Un error o una sugerencia, de la web o de la herramienta? Abre un
+  [issue](https://github.com/ulmoexp/eledger/issues) en ese repositorio.
+
+## Qué hay aquí
 
 ```
-index.html        portada
+index.html        la portada
 guia/             la guía de uso
-reglas.html       sintaxis de rules.json
-assets/           CSS compartido y escena.js (la escena de la portada)
+reglas.html       cómo escribir tus reglas de clasificación
+assets/           los estilos y la escena animada de la portada
 ```
 
-## Ver los cambios en local
+Es HTML y CSS a mano, sin frameworks ni paso de compilación, servido por
+GitHub Pages.
+
+## Privacidad
+
+La web no usa analítica, cookies ni recursos de terceros (tampoco fuentes
+externas). La escena de la portada solo lee la hora de tu propio navegador
+para pintar el cielo; no envía nada a ningún sitio.
+
+## Verla en tu ordenador
 
 ```
 python3 -m http.server
 ```
 
-y abrir `http://localhost:8000`.
-
-## Nada de analítica
-
-La portada promete privacidad; sería incoherente meter cualquier tipo de
-rastreo aquí. Nada de Google Analytics, ni siquiera algo "anónimo".
+y abre `http://localhost:8000`.
