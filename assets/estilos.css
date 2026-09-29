@@ -396,6 +396,8 @@ button.boton-secundario { cursor: pointer; font-size: 0.95rem; padding: 8px 18px
   transform: translateX(-4px);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
+.apoyo-aviso { display: inline-flex; align-items: center; gap: 6px; }
+.apoyo-tick { width: 18px; height: 18px; flex: none; }
 .apoyo-aviso.visible { opacity: 1; transform: none; }
 .apoyo-aviso.fallo { color: var(--aviso, #B4531A); }
 

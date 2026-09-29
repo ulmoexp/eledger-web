@@ -14,9 +14,14 @@
   boton.hidden = false;
   var reloj = null;
 
+  // el tick, dibujado como los iconos de la portada (trazo, sin emoji)
+  var TICK = '<svg class="apoyo-tick" viewBox="0 0 24 24" aria-hidden="true" fill="none" ' +
+    'stroke="currentColor" stroke-width="2.4" stroke-linecap="square" ' +
+    'stroke-linejoin="miter"><path d="M4 12.5l5 5L20 6.5"/></svg>';
+
   function avisar(texto, fallo) {
     if (!aviso) return;
-    aviso.textContent = texto;
+    aviso.innerHTML = (fallo ? "" : TICK) + "<span>" + texto + "</span>";
     aviso.classList.toggle("fallo", !!fallo);
     aviso.classList.add("visible");
     clearTimeout(reloj);
@@ -25,7 +30,7 @@
 
   boton.addEventListener("click", function () {
     navigator.clipboard.writeText(direccion.textContent.trim()).then(function () {
-      avisar("Dirección copiada");
+      avisar("Copiado");
     }, function () {
       avisar("No se ha podido copiar: selecciónala a mano", true);
     });
