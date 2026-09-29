@@ -347,6 +347,39 @@ p.entradilla {
 .grafico-hoja .barra { display: block; height: 14px; background: #2A78D6; }
 .grafico-hoja .valor { font-variant-numeric: tabular-nums; }
 
+/* --- apoya el proyecto: la dirección Lightning y su QR (generado en
+   local y servido desde assets/, sin nada de terceros) --- */
+.apoyo {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  max-width: var(--medida);
+  padding: 22px;
+  border: 1.5px dashed var(--linea);
+}
+.apoyo-qr {
+  flex: none;
+  width: 170px;
+  height: 170px;
+  padding: 8px;
+  background: #FFFFFF;
+  border: 1.5px solid var(--tinta);
+  box-shadow: 4px 4px 0 var(--linea);
+}
+.apoyo-texto { flex: 1; min-width: 0; }
+.apoyo-etiqueta {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--acento);
+  font-weight: 700;
+}
+/* la dirección es larga: que parta donde haga falta en vez de desbordar */
+.apoyo-direccion { margin: 0 0 14px; overflow-wrap: anywhere; }
+.apoyo-direccion code { font-size: 0.95rem; }
+button.boton-secundario { cursor: pointer; font-size: 0.95rem; padding: 8px 18px; }
+
 /* --- pasos --- */
 .pasos {
   list-style: none;
@@ -1340,6 +1373,8 @@ footer a:hover { color: var(--acento); }
 
 /* --- móvil --- */
 @media (max-width: 820px) {
+  .apoyo { flex-direction: column; align-items: flex-start; }
+  .apoyo-direccion code { font-size: 0.85rem; }
   .hero {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "texto" "privacidad" "escena";

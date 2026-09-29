@@ -7,6 +7,7 @@
 <meta name="description" content="Herramienta local para clasificar tus movimientos bancarios. Todo se procesa en tu ordenador: sin servidor, sin cuenta, sin conexión a internet.">
 <link rel="stylesheet" href="assets/estilos.css">
 <script src="assets/escena.js" defer></script>
+<script src="assets/apoyo.js" defer></script>
 </head>
 <body>
 
@@ -231,6 +232,26 @@
     </ol>
   </section>
 
+  <section class="contenedor" id="apoya">
+    <h2>Apoya el proyecto</h2>
+    <p class="entradilla">Es gratis y lo seguirá siendo. Si te resulta útil y
+      quieres echar una mano, puedes enviar lo que quieras por Lightning
+      (bitcoin): sin cuentas, sin formularios, sin datos de nadie.</p>
+    <div class="apoyo">
+      <img class="apoyo-qr" src="assets/lightning-qr.svg" width="170" height="170"
+           alt="Código QR de la dirección Lightning para apoyar el proyecto">
+      <div class="apoyo-texto">
+        <p class="apoyo-etiqueta">Dirección Lightning</p>
+        <p class="apoyo-direccion"><code id="direccion-ln">victoriouscookie143740@<wbr>getalby.com</code></p>
+        <button class="boton-secundario" id="copiar-ln" type="button" hidden>Copiar</button>
+        <p class="pmini">Escanea el código o pega la dirección en tu monedero
+          Lightning. ¿No usas bitcoin? Una
+          <a href="https://github.com/ulmoexp/eledger">estrella en GitHub</a>
+          también ayuda.</p>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="contenedor">
@@ -239,6 +260,7 @@
     <span>
       <a href="https://github.com/ulmoexp/eledger">Código en GitHub</a>
       · <a href="https://github.com/ulmoexp/eledger/blob/master/LICENSE">Licencia MIT</a>
+      · <a href="#apoya">Apoya el proyecto</a>
       · sin analítica, sin cookies
     </span>
   </div>

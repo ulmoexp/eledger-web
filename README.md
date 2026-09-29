@@ -10,6 +10,13 @@ tus movimientos bancarios sin que salgan de tu ordenador:
 - ¿Un error o una sugerencia, de la web o de la herramienta? Abre un
   [issue](https://github.com/ulmoexp/eledger/issues) en ese repositorio.
 
+## Apoya el proyecto
+
+Es gratis y lo seguirá siendo. Si te resulta útil, puedes enviar lo que
+quieras por Lightning (bitcoin) a
+**`victoriouscookie143740@getalby.com`**, o escanear el código QR de la
+[portada](https://ulmoexp.github.io/eledger-web/#apoya).
+
 ## Qué hay aquí
 
 ```
