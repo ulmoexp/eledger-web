@@ -379,6 +379,25 @@ p.entradilla {
 .apoyo-direccion { margin: 0 0 14px; overflow-wrap: anywhere; }
 .apoyo-direccion code { font-size: 0.95rem; }
 button.boton-secundario { cursor: pointer; font-size: 0.95rem; padding: 8px 18px; }
+/* el botón y, a su lado, el aviso de que se ha copiado: aparece con un
+   fundido y se va solo */
+.apoyo-accion {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-bottom: 14px;
+}
+.apoyo-aviso {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--acento);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.apoyo-aviso.visible { opacity: 1; transform: none; }
+.apoyo-aviso.fallo { color: var(--aviso, #B4531A); }
 
 /* --- pasos --- */
 .pasos {
