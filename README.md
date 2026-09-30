@@ -23,7 +23,7 @@ quieras por Lightning (bitcoin) a
 index.html        la portada
 guia/             la guía de uso
 reglas.html       cómo escribir tus reglas de clasificación
-assets/           los estilos y la escena animada de la portada
+assets/           los estilos, la escena animada y el vídeo de la portada
 ```
 
 Es HTML y CSS a mano, sin frameworks ni paso de compilación, servido por

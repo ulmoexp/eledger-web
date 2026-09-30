@@ -231,6 +231,25 @@ p.entradilla {
 .aviso.alerta { background: var(--aviso-cl); border-color: var(--aviso); }
 .aviso.alerta h3 { color: var(--aviso); }
 
+/* --- vídeo de la portada: servido desde la propia web, no desde YouTube,
+   para no romper «sin analítica, sin cookies» (un reproductor incrustado
+   conecta el navegador con un tercero). preload="none" + póster: no se
+   descarga nada hasta que se le da al play. Mismo marco que la escena. --- */
+.video { margin: 28px 0 0; }
+.video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--tinta);
+  border: 1.5px solid var(--tinta);
+  box-shadow: 6px 6px 0 var(--linea);
+}
+.video figcaption {
+  margin-top: 14px;
+  font-size: 0.82rem;
+  color: var(--gris);
+}
+
 /* --- lista de qué hace: sin cajas, renglones separados por rayas --- */
 .rejilla {
   margin-top: 28px;
