@@ -2,7 +2,7 @@
 
 La web de **Movimientos bancarios** (eledger), la herramienta que clasifica
 tus movimientos bancarios sin que salgan de tu ordenador:
-**https://ulmoexp.github.io/eledger-web/**
+**https://eledger.surge.sh**
 
 - La herramienta, su código y las descargas están en
   [ulmoexp/eledger](https://github.com/ulmoexp/eledger)
@@ -15,7 +15,7 @@ tus movimientos bancarios sin que salgan de tu ordenador:
 Es gratis y lo seguirá siendo. Si te resulta útil, puedes enviar lo que
 quieras por Lightning (bitcoin) a
 **`victoriouscookie143740@getalby.com`**, o escanear el código QR de la
-[portada](https://ulmoexp.github.io/eledger-web/#apoya).
+[portada](https://eledger.surge.sh/#apoya).
 
 ## Qué hay aquí
 
@@ -26,8 +26,13 @@ reglas.html       cómo escribir tus reglas de clasificación
 assets/           los estilos, la escena animada y el vídeo de la portada
 ```
 
-Es HTML y CSS a mano, sin frameworks ni paso de compilación, servido por
-GitHub Pages.
+Es HTML y CSS a mano, sin frameworks ni paso de compilación. Se publica en
+[Surge](https://surge.sh) con `./publicar.sh`, que sube solo lo que está
+comiteado (la primera vez hace falta `surge login`).
+
+**Ojo: un `git push` no actualiza la web.** Después de comitear un cambio
+hay que ejecutar `./publicar.sh`. La copia de GitHub Pages
+(ulmoexp.github.io/eledger-web) solo redirige a eledger.surge.sh.
 
 ## Privacidad
 
