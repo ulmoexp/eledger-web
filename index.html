@@ -3,6 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://eledger.surge.sh/">
+<!-- La web oficial está en Surge. Esta misma página la sirve también GitHub
+     Pages (ulmoexp.github.io/eledger-web); allí solo redirige, conservando la
+     ruta y el ancla, para que los enlaces antiguos sigan funcionando sin tener
+     dos copias distintas. En Surge no hace nada y no pide nada a ningún sitio. -->
+<script>if (location.hostname === "ulmoexp.github.io") location.replace("https://eledger.surge.sh" + location.pathname.replace(/^\/eledger-web/, "") + location.search + location.hash);</script>
 <title>Movimientos bancarios · eledger</title>
 <meta name="description" content="Herramienta local para clasificar tus movimientos bancarios. Todo se procesa en tu ordenador: sin servidor, sin cuenta, sin conexión a internet.">
 <link rel="stylesheet" href="assets/estilos.css">
