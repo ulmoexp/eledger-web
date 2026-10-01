@@ -53,6 +53,7 @@
     <div class="grupo-indice">
       <h3>Clasificar</h3>
       <ul>
+        <li><a href="#editar-ajustes">Cómo editar los ajustes</a></li>
         <li><a href="#rules-json">rules.json · cómo se clasifica</a></li>
         <li><a href="#probar-una-regla">Probar una regla</a></li>
         <li><a href="#exclude-patterns-json">exclude_patterns.json</a></li>
@@ -106,7 +107,7 @@
     <li><span>Suéltalos en la carpeta <code>entrada/</code> <span class="mut">tal cual: sin renombrar, sin convertir</span></span></li>
     <li><span>Doble clic en <code>ejecutar.bat</code> <span class="mut">(Windows)</span>, <code>ejecutar.command</code> <span class="mut">(Mac)</span> o <code>ejecutar.sh</code> <span class="mut">(Linux)</span></span></li>
     <li><span>Revisa el resumen en pantalla <span class="mut">(los avisos, si hay, salen juntos al final)</span></span></li>
-    <li><span>Pulsa <strong>1</strong> para abrir el histórico <span class="mut">(2 abre su carpeta, 3 ejecuta de nuevo; Intro cierra)</span></span></li>
+    <li><span>Elige en el menú: abrir el histórico, <strong>clasificar lo que falta</strong> o <strong>excluir el recibo de la tarjeta</strong> <span class="mut">(si hay algo: te pregunta y escribe los ajustes por ti)</span>, o ejecutar de nuevo <span class="mut">(Intro cierra)</span></span></li>
   </ol>
   <div class="aviso">
     <h3>No hay que preparar nada</h3>
@@ -222,6 +223,31 @@
     apoyo que no hace falta mirar.</p>
 </section>
 
+<section class="contenedor seccion-guia" id="editar-ajustes">
+  <h2>Cómo editar los ajustes</h2>
+  <p>Los ficheros de <code>ajustes/</code> son texto: se abren con el
+    <strong>Bloc de notas</strong> en Windows, <strong>TextEdit</strong> en
+    Mac o cualquier editor de texto. Con Word no: cambia las comillas.</p>
+  <div class="aviso">
+    <h3>Lo más habitual no hace falta hacerlo a mano</h3>
+    <p>Al terminar, el menú ofrece <strong>Clasificar lo que falta</strong> y
+      <strong>Excluir el recibo de la tarjeta</strong> cuando hay algo: eliges
+      con un número y escribe la línea por ti, sin tocar nada más del fichero
+      (y deja una copia de cómo estaba en <code>datos/copias/</code>).</p>
+  </div>
+  <p>Para lo demás: <strong>cada línea acaba en coma</strong>, salvo la
+    última; las comillas, <strong>dobles y rectas</strong>; las categorías,
+    igual que en <code>categorias.json</code>, sin tildes; y las líneas que
+    empiezan por <code>_</code> son comentarios.</p>
+  <pre class="codigo"><code>{
+  "casero": "Piso",    ← con coma
+  "academia": "Hijos"  ← sin coma
+}</code></pre>
+  <p class="pmini">Si algo no cuadra, al ejecutar se dice qué fichero y qué
+    línea. Casi siempre es la coma de la línea de antes: corrígelo, guarda y
+    escribe <strong>R</strong> para volver a probar.</p>
+</section>
+
 <section class="contenedor seccion-guia" id="rules-json">
   <h2>rules.json · cómo se clasifica</h2>
   <p>Es un diccionario de <strong>texto a buscar → categoría</strong>. Gana
@@ -266,7 +292,7 @@ BAR LA ESQUINA      ->  Ocio                     [=bar · base]</code></pre>
 ]</code></pre>
   <p class="pmini">El <code>77</code> son los dígitos con que tu banco
     identifica la tarjeta en el recibo. Si lo dejas vacío, al terminar la
-    herramienta te propone la línea lista para pegar aquí. Lo descartado no
+    herramienta te propone la línea, y desde el menú puede añadirla por ti. Lo descartado no
     se pierde: queda en <code>movimientos_excluidos.xlsx</code>.</p>
 </section>
 
