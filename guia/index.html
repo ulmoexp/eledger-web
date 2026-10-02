@@ -291,12 +291,17 @@ BAR LA ESQUINA      ->  Ocio                     [=bar · base]</code></pre>
   "pago recibo 77",
   "tarj.crdto 77"
 ]</code></pre>
+  <p>Las dos líneas del ejemplo son el <strong>mismo pago visto desde los
+    dos lados</strong>: algunos bancos lo apuntan como cargo en la cuenta y
+    también como abono, por el mismo importe, en el extracto de la tarjeta.
+    Hay que excluir las dos: sin la segunda, ese abono cuenta como un
+    ingreso que no lo es.</p>
   <p class="pmini">El <code>77</code> son los dígitos con que tu banco
-    identifica la tarjeta en el recibo. Si lo dejas vacío, al terminar la
-    herramienta te propone la línea, y desde el menú puede añadirla por ti
-    (si no lo encuentra, escribes un trozo del concepto y te enseña qué
-    excluiría antes de guardarlo). Lo descartado no
-    se pierde: queda en <code>movimientos_excluidos.xlsx</code>.</p>
+    identifica la tarjeta. Al terminar, la herramienta busca las dos líneas
+    por su importe, te propone las que falten y desde el menú puede
+    añadirlas por ti (si no las encuentra, escribes un trozo del concepto y
+    te enseña qué excluiría antes de guardarlo). Lo descartado no se
+    pierde: queda en <code>movimientos_excluidos.xlsx</code>.</p>
 </section>
 
 <section class="contenedor seccion-guia" id="cuentas-json">
