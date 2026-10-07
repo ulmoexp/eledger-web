@@ -288,15 +288,15 @@ BAR LA ESQUINA      ->  Ocio                     [=bar · base]</code></pre>
     la tarjeta, que si no contarías dos veces: una vez en la cuenta y otra
     como compras sueltas.</p>
   <pre class="codigo"><code>[
-  "pago recibo 77",
-  "tarj.crdto 77"
+  "pago recibo 1234",
+  "cargo tarjeta 1234"
 ]</code></pre>
   <p>Las dos líneas del ejemplo son el <strong>mismo pago visto desde los
     dos lados</strong>: algunos bancos lo apuntan como cargo en la cuenta y
     también como abono, por el mismo importe, en el extracto de la tarjeta.
     Hay que excluir las dos: sin la segunda, ese abono cuenta como un
     ingreso que no lo es.</p>
-  <p class="pmini">El <code>77</code> son los dígitos con que tu banco
+  <p class="pmini">El <code>1234</code> son los dígitos con que tu banco
     identifica la tarjeta. Al terminar, la herramienta busca las dos líneas
     por su importe, te propone las que falten y desde el menú puede
     añadirlas por ti (si no las encuentra, escribes un trozo del concepto y
@@ -367,7 +367,7 @@ BAR LA ESQUINA      ->  Ocio                     [=bar · base]</code></pre>
 <section class="contenedor seccion-guia" id="corregir-un-movimiento">
   <h2>Corregir un movimiento suelto</h2>
   <p>Las reglas leen el texto del concepto, no la fecha, así que no pueden
-    distinguir el <code>BIZUM A MARTA</code> que un mes es el alquiler y otro
+    distinguir el <code>BIZUM A AMIGA</code> que un mes es el alquiler y otro
     una cena. Para esos casos está la columna <strong>categoria_manual</strong>.</p>
   <ol class="pasos">
     <li><span>Abre <code>datos/historico.xlsx</code>, hoja
